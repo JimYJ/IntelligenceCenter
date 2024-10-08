@@ -1,7 +1,14 @@
 package main
 
-import "IntelligenceCenter/router"
+import (
+	"IntelligenceCenter/router"
+	"embed"
+)
+
+//go:embed static/dist
+var static embed.FS
 
 func main() {
-	router.Web()
+	go router.Web(static)
+	router.Api()
 }
