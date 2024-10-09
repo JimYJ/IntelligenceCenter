@@ -1,20 +1,25 @@
 package router
 
 import (
-	"fmt"
+	"IntelligenceCenter/service/log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Api() {
-	r := gin.Default()
-	r.GET("/api/test", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"msg": "hello world",
-		})
-	})
-	err := r.Run(":6061")
+	router:=gin.New()
+	router.Use(log.Logs())
+	router.Use(log.Recovery())
+	api:=router.Group("/api")
+	api.POST("/test")
+	router.GET("/ping", func(c *gin.Context) {
+        log.Info("Handling /ping request")
+        c.JSON(200, gin.H{
+            "message": "pong",
+        })
+    })
+	err := router.Run(":6061")
 	if err != nil {
-		fmt.Println(err)
+		log.Logger.Println(err)
 	}
 }
