@@ -1,6 +1,7 @@
-package log
+package utils
 
 import (
+	"IntelligenceCenter/service/log"
 	"os"
 )
 
@@ -11,7 +12,7 @@ func IsDir(path string) (bool, bool) {
 		if os.IsNotExist(err) {
 			return false, false
 		}
-		Logger.Fatalln(err)
+		log.Info(err)
 	}
 	return true, fileinfo.IsDir()
 }
@@ -22,7 +23,7 @@ func CreateDir(logPath string) {
 	if !isDir {
 		err := os.Mkdir(logPath, os.ModePerm)
 		if err != nil {
-			Logger.Println("创建日志目录失败：", err)
+			log.Info("创建日志目录失败：", err)
 		}
 	}
 }

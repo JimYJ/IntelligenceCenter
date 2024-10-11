@@ -7,17 +7,17 @@ import (
 )
 
 func Api() {
-	router:=gin.New()
+	router := gin.New()
 	router.Use(log.Logs())
 	router.Use(log.Recovery())
-	api:=router.Group("/api")
+	api := router.Group("/api")
 	api.POST("/test")
 	router.GET("/ping", func(c *gin.Context) {
-        log.Info("Handling /ping request")
-        c.JSON(200, gin.H{
-            "message": "pong",
-        })
-    })
+		log.Info("Handling /ping request", "thfghdf")
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
 	err := router.Run(":6061")
 	if err != nil {
 		log.Logger.Println(err)

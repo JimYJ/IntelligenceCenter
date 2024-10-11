@@ -73,7 +73,13 @@ func getCallerInfo() string {
 }
 
 // 自定义日志记录函数，包含位置信息
-func Info(msg string) {
+func Info(msg ...any) {
 	location := getCallerInfo()
-	Logger.Log(logrus.InfoLevel, location, " ", msg)
+	var gap any = " "
+	tempMsg := make([]any, 0)
+	tempMsg = append(tempMsg, location)
+	for _, item := range msg {
+		tempMsg = append(tempMsg, gap, item)
+	}
+	Logger.Log(logrus.InfoLevel, tempMsg...)
 }
