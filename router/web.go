@@ -9,14 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 func Web(static embed.FS) {
-	router:=gin.New()
+	router := gin.New()
 	router.Use(log.Logs())
 	router.Use(log.Recovery())
 	st, err := fs.Sub(static, "static/dist")
 	if err != nil {
-		log.Logger.Println("加载静态资源失败:",err)
+		log.Info("加载静态资源失败:", err)
 	}
 	router.StaticFS("/", http.FS(st))
 	router.NoRoute(func(c *gin.Context) {
@@ -29,6 +28,6 @@ func Web(static embed.FS) {
 	})
 	err = router.Run(":6060")
 	if err != nil {
-		log.Logger.Println("启动静态页面失败:",err)
+		log.Info("启动静态页面失败:", err)
 	}
 }
