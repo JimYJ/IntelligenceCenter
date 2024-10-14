@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	createSqlList = []string{optionTableSql, llmSettingTableSql, archiveTableSql}
+	createSqlList = []string{optionTableSql, llmSettingTableSql, archiveTableSql, archiveDocsTableSql, docResourceTableSql, taskTableSql}
 
 	checkTableSql = ""
 
@@ -18,7 +18,7 @@ var (
 						"scraping_interval" integer NOT NULL,                -- 抓取间隔(秒)
 						"global_scraping_depth" integer NOT NULL,            -- 抓取深度
 						"request_rate_limit" integer NOT NULL,               -- 每秒请求上限
-						"use_proxy_ip_pool" boolean NOT NULL,                -- 使用代理IP池
+						"use_proxy_ip_pool" boolean NOT NULL DEFAULT 0,      -- 使用代理IP池
 						"use_global_concurrency_pool" boolean NOT NULL       -- 使用全局并发池
 					);`
 
@@ -30,7 +30,7 @@ var (
 							api_key TEXT NOT NULL,                          -- API 密钥
 							timeout INTEGER NOT NULL DEFAULT 30,            -- 超时设置(秒),默认30秒
 							request_rate_limit INTEGER NOT NULL,            -- 每秒请求上限
-							use_proxy_pool BOOLEAN NOT NULL DEFAULT 0,      -- 使用代理 IP 池
+							use_proxy_pool BOOLEAN NOT NULL DEFAULT 0,      -- 使用代理 IP 池 0否1是
 							remark TEXT                                     -- 描述信息
 						);`
 	archiveTableSql = `CREATE TABLE "archive" (
@@ -42,8 +42,53 @@ var (
 							"extraction_model" varchar(128) NOT NULL,                  -- 提取模型
 							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
 							"updated_at" datetime                                      -- 更新时间
-						);
-						  `
+						);`
+	archiveDocsTableSql = `CREATE TABLE "archive_docs" (
+							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
+							"doc_name" varchar(128) NOT NULL,                          -- 文档名称
+							"origin_content" text,                                     -- 文档原始内容
+							"extraction_content" text,                                 -- 提取后内容
+							"translate_content" text,                                  -- 翻译后内容
+							"is_translated" BOOLEAN NOT NULL DEFAULT 0,                 -- 是否被翻译 0否1是
+							"src_url" text,                                            -- 来源网址
+							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+							"updated_at" datetime                                      -- 更新时间
+						);`
+	docResourceTableSql = `CREATE TABLE "doc_resource" (
+							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
+							"doc_id" INTEGER NOT NULL,                                 -- 文档ID
+							"resource_type" integer NOT NULL,                          -- 资源类型 1-图片 2-PDF 3-word 4-PPT
+							"resource_path" text NOT NULL,                             -- 资源路径
+							"resource_status" text NOT NULL,                           -- 资源状态 1-未下载 2-已下载
+							"resource_size" integer NOT NULL,                          -- 资源大小(字节数)
+							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP   -- 创建时间
+						);`
+	taskTableSql = `CREATE TABLE "task" (
+							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
+							"archive_id" INTEGER NOT NULL,                             -- 指定归档的档案ID
+							"task_name" varchar(128) NOT NULL,                         -- 任务名称
+							"crawl_url" text NOT NULL,                                 -- 抓取地址，多个地址换行分割
+							"exec_type" INTEGER NOT NULL DEFAULT 1,                    -- 执行类型 1-立即执行 2-周期循环
+							"cycle_type" INTEGER NOT NULL DEFAULT 1,                   -- 周期类型 1-每日 2-每周
+							"week_days" varchar(20),                                   -- 指定周几执行，可多选，英文逗号隔开
+							"exec_time" time,                                          -- 执行时间
+							"task_status" BOOLEAN NOT NULL DEFAULT 1,                  -- 任务状态 0关闭 1启用
+							"enable_filter" BOOLEAN NOT NULL DEFAULT 0,                -- 启用匹配过滤器 0关闭 1启用
+							"domain_match" text,                                       -- 域名匹配过滤器 为空则不生效
+							"path_match" text,                                         -- 路径匹配过滤器 为空则不生效
+							"crawl_option" BOOLEAN NOT NULL DEFAULT 1,                 -- 抓取器设置 0自定义 1全局
+							"crawl_type" integer NOT NULL DEFAULT 1,                   -- 抓取器选择 1 内置爬虫 2 headless浏览器 3 firecrawl
+							"concurrent_count" integer NOT NULL,                       -- 并发数
+							"scraping_interval" integer NOT NULL,                      -- 抓取间隔(秒)
+							"global_scraping_depth" integer NOT NULL,                  -- 抓取深度
+							"request_rate_limit" integer NOT NULL,                     -- 每秒请求上限
+							"use_proxy_ip_pool" boolean NOT NULL DEFAULT 0,            -- 使用代理IP池
+							"extraction_mode" boolean NOT NULL,                        -- 抽取模式 1精准抽取 2智能抽取
+							"api_settings_id" integer,                                 -- API设置表ID
+							"api_model" varchar(128),                                  -- API指定LLM模型
+							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+							"updated_at" datetime                                      -- 更新时间
+						);`
 )
 
 // 初始化数据库
