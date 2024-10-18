@@ -15,7 +15,7 @@ func Api() {
 	llmseting := router.Group("/llm")
 	llmseting.POST("/add", llm.Create)
 	llmseting.GET("/del", llm.Del)
-	llmseting.POST("/edit")
+	llmseting.POST("/edit", llm.Edit)
 	api.POST("/list")
 	router.GET("/ping", func(c *gin.Context) {
 		// log.Info("Handling /ping request", "thfghdf")
