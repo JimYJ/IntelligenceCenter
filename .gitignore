@@ -1,3 +1,4 @@
 static/
 logs/
 __debug_bin*.exe
+database/

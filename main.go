@@ -1,8 +1,8 @@
 package main
 
 import (
+	"IntelligenceCenter/app/db"
 	"IntelligenceCenter/common/utils"
-	db "IntelligenceCenter/database"
 	"IntelligenceCenter/router"
 	"embed"
 
@@ -11,7 +11,7 @@ import (
 
 var (
 	// 检查初始化目录
-	needDir = []string{"logs", "extraction-rules", "database"}
+	needDir = []string{"logs", "extraction-rules", "database", "proxy-ip"}
 )
 
 //go:embed static/dist

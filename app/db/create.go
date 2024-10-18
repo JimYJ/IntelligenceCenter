@@ -1,4 +1,4 @@
-package database
+package db
 
 import (
 	"IntelligenceCenter/common/sqlite"
@@ -49,7 +49,7 @@ var (
 							"origin_content" text,                                     -- 文档原始内容
 							"extraction_content" text,                                 -- 提取后内容
 							"translate_content" text,                                  -- 翻译后内容
-							"is_translated" BOOLEAN NOT NULL DEFAULT 0,                 -- 是否被翻译 0否1是
+							"is_translated" BOOLEAN NOT NULL DEFAULT 0,                -- 是否被翻译 0否1是
 							"src_url" text,                                            -- 来源网址
 							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
 							"updated_at" datetime                                      -- 更新时间
@@ -83,7 +83,7 @@ var (
 							"global_scraping_depth" integer NOT NULL,                  -- 抓取深度
 							"request_rate_limit" integer NOT NULL,                     -- 每秒请求上限
 							"use_proxy_ip_pool" boolean NOT NULL DEFAULT 0,            -- 使用代理IP池
-							"extraction_mode" boolean NOT NULL,                        -- 抽取模式 1精准抽取 2智能抽取
+							"extraction_mode" boolean NOT NULL,                        -- 抽取模式 1精准抽取 2智能抽取(混合精准抽取)
 							"api_settings_id" integer,                                 -- API设置表ID
 							"api_model" varchar(128),                                  -- API指定LLM模型
 							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
