@@ -36,7 +36,7 @@ var (
 	archiveTableSql = `CREATE TABLE "archive" (
 							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
 							"archive_name" varchar(128) NOT NULL,                      -- 档案名称
-							"file_count" integer NOT NULL DEFAULT 0,                   -- 档案文件数
+							-- "file_count" integer NOT NULL DEFAULT 0,                -- 档案文件数
 							"extraction_mode" integer NOT NULL,                        -- 提取模式 1-精准匹配 2-智能匹配
 							"api_key_id" integer NOT NULL,                             -- llm_api_settings 表ID
 							"extraction_model" varchar(128) NOT NULL,                  -- 提取模型
@@ -46,11 +46,13 @@ var (
 	archiveDocsTableSql = `CREATE TABLE "archive_docs" (
 							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
 							"doc_name" varchar(128) NOT NULL,                          -- 文档名称
+							"task_id" integer NOT NULL,                                -- 任务ID
+							"archive_id" INTEGER NOT NULL,                             -- 所属的档案ID
 							"origin_content" text,                                     -- 文档原始内容
 							"extraction_content" text,                                 -- 提取后内容
 							"translate_content" text,                                  -- 翻译后内容
 							"is_translated" BOOLEAN NOT NULL DEFAULT 0,                -- 是否被翻译 0否1是
-							"src_url" text,                                            -- 来源网址
+							"src_url" text,                                            -- 来源网址/来源文档地址
 							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
 							"updated_at" datetime                                      -- 更新时间
 						);`

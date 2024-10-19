@@ -86,7 +86,7 @@ func countRecord(keyword string) int {
 	var num int
 	err := sqlite.Conn().Select(&num, sql)
 	if err != nil {
-		log.Println("查询llm设置表出错:", err)
+		log.Println("查询llm设置总数出错:", err)
 		return num
 	}
 	return num

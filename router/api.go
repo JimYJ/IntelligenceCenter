@@ -1,6 +1,7 @@
 package router
 
 import (
+	"IntelligenceCenter/app/archive"
 	"IntelligenceCenter/app/llm"
 	"IntelligenceCenter/service/log"
 
@@ -12,11 +13,16 @@ func Api() {
 	router.Use(log.Logs())
 	router.Use(log.Recovery())
 	api := router.Group("/api")
+	// LLM API
 	llmseting := api.Group("/llm")
 	llmseting.POST("/add", llm.Create)
 	llmseting.GET("/del", llm.Del)
 	llmseting.POST("/edit", llm.Edit)
 	llmseting.POST("/list", llm.ListByPage)
+	// 档案
+	archiveDoc := api.Group("/archive")
+	archiveDoc.POST("/list", archive.ArchiveListByPage)
+	archiveDoc.POST("/doc/list", archive.DocListByPage)
 	router.GET("/ping", func(c *gin.Context) {
 		// log.Info("Handling /ping request", "thfghdf")
 		c.JSON(200, gin.H{
