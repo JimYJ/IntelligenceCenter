@@ -1,6 +1,7 @@
 package llm
 
 import (
+	"IntelligenceCenter/app/common"
 	"IntelligenceCenter/response"
 
 	"github.com/gin-gonic/gin"
@@ -94,4 +95,23 @@ func Edit(c *gin.Context) {
 		response.Err(c, 400, response.ErrOperationFailed)
 		return
 	}
+}
+
+func ListByPage(c *gin.Context) {
+	keyword := c.Query("keyword")
+	pageNo, pageSize := common.PageParams(c)
+	totalCount := countRecord(keyword)
+	if totalCount == 0 {
+		response.Success(c, &common.PageInfo{
+			PageNo:      pageNo,
+			TotalRecord: 0,
+			TotalPage:   0,
+			PageSize:    pageSize,
+		})
+		return
+	}
+	pager, start := common.Page(totalCount, pageSize, pageNo)
+	list := listByPage(start, pageSize, keyword)
+	pager.Data = list
+	response.Success(c, pager)
 }
