@@ -66,31 +66,31 @@ var (
 							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP   -- 创建时间
 						);`
 	taskTableSql = `CREATE TABLE "task" (
-							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
-							"archive_id" INTEGER NOT NULL,                             -- 指定归档的档案ID
-							"task_name" varchar(128) NOT NULL,                         -- 任务名称
-							"crawl_url" text NOT NULL,                                 -- 抓取地址，多个地址换行分割
-							"exec_type" INTEGER NOT NULL DEFAULT 1,                    -- 执行类型 1-立即执行 2-周期循环
-							"cycle_type" INTEGER NOT NULL DEFAULT 1,                   -- 周期类型 1-每日 2-每周
-							"week_days" varchar(20),                                   -- 指定周几执行，可多选，英文逗号隔开
-							"exec_time" time,                                          -- 执行时间
-							"task_status" BOOLEAN NOT NULL DEFAULT 1,                  -- 任务状态 0关闭 1启用
-							"enable_filter" BOOLEAN NOT NULL DEFAULT 0,                -- 启用匹配过滤器 0关闭 1启用
-							"domain_match" text,                                       -- 域名匹配过滤器 为空则不生效
-							"path_match" text,                                         -- 路径匹配过滤器 为空则不生效
-							"crawl_option" BOOLEAN NOT NULL DEFAULT 1,                 -- 抓取器设置 0自定义 1全局
-							"crawl_type" integer NOT NULL DEFAULT 1,                   -- 抓取器选择 1 内置爬虫 2 headless浏览器 3 firecrawl
-							"concurrent_count" integer NOT NULL,                       -- 并发数
-							"scraping_interval" integer NOT NULL,                      -- 抓取间隔(秒)
-							"global_scraping_depth" integer NOT NULL,                  -- 抓取深度
-							"request_rate_limit" integer NOT NULL,                     -- 每秒请求上限
-							"use_proxy_ip_pool" boolean NOT NULL DEFAULT 0,            -- 使用代理IP池
-							"extraction_mode" boolean NOT NULL,                        -- 抽取模式 1精准抽取 2智能抽取(混合精准抽取)
-							"api_settings_id" integer,                                 -- API设置表ID
-							"api_model" varchar(128),                                  -- API指定LLM模型
-							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
-							"updated_at" datetime                                      -- 更新时间
-						);`
+						"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
+						"archive_id" INTEGER NOT NULL,                             -- 指定归档的档案ID
+						"task_name" varchar(128) NOT NULL,                         -- 任务名称
+						"crawl_url" text NOT NULL,                                 -- 抓取地址，多个地址换行分割
+						"exec_type" INTEGER NOT NULL DEFAULT 1,                    -- 执行类型 1-立即执行 2-周期循环
+						"cycle_type" INTEGER NOT NULL DEFAULT 1,                   -- 周期类型 1-每日 2-每周
+						"week_days" varchar(20),                                   -- 指定周几执行，可多选，英文逗号隔开
+						"exec_time" time,                                          -- 执行时间
+						"task_status" BOOLEAN NOT NULL DEFAULT 1,                  -- 任务状态 0关闭 1启用
+						"enable_filter" BOOLEAN NOT NULL DEFAULT 0,                -- 启用匹配过滤器 0关闭 1启用
+						"domain_match" text,                                       -- 域名匹配过滤器 为空则不生效
+						"path_match" text,                                         -- 路径匹配过滤器 为空则不生效
+						"crawl_option" BOOLEAN NOT NULL DEFAULT 1,                 -- 抓取器设置 0自定义 1全局
+						"crawl_type" integer NOT NULL DEFAULT 1,                   -- 抓取器选择 1 内置爬虫 2 headless浏览器 3 firecrawl
+						"concurrent_count" integer NOT NULL,                       -- 并发数
+						"scraping_interval" integer NOT NULL,                      -- 抓取间隔(秒)
+						"global_scraping_depth" integer NOT NULL,                  -- 抓取深度
+						"request_rate_limit" integer NOT NULL,                     -- 每秒请求上限
+						"use_proxy_ip_pool" boolean NOT NULL DEFAULT 0,            -- 使用代理IP池
+						"extraction_mode" boolean NOT NULL,                        -- 抽取模式 1精准抽取 2智能抽取(混合精准抽取)
+						"api_settings_id" integer,                                 -- API设置表ID
+						"api_model" varchar(128),                                  -- API指定LLM模型
+						"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+						"updated_at" datetime                                      -- 更新时间
+					);`
 )
 
 // 初始化数据库

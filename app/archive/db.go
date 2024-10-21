@@ -51,7 +51,7 @@ func archiveCountRecord(keyword string) int {
 				%s;`
 	sql = fmt.Sprintf(sql, searchSql)
 	var num int
-	err := sqlite.Conn().Select(&num, sql)
+	err := sqlite.Conn().Get(&num, sql)
 	if err != nil {
 		log.Println("查询档案总数出错:", err)
 		return num
@@ -109,7 +109,7 @@ func docCountRecord(keyword string) int {
 				%s;`
 	sql = fmt.Sprintf(sql, searchSql)
 	var num int
-	err := sqlite.Conn().Select(&num, sql)
+	err := sqlite.Conn().Get(&num, sql)
 	if err != nil {
 		log.Println("查询档案总数出错:", err)
 		return num

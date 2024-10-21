@@ -3,6 +3,7 @@ package router
 import (
 	"IntelligenceCenter/app/archive"
 	"IntelligenceCenter/app/llm"
+	"IntelligenceCenter/router/middleware"
 	"IntelligenceCenter/service/log"
 
 	"github.com/gin-gonic/gin"
@@ -12,13 +13,14 @@ func Api() {
 	router := gin.New()
 	router.Use(log.Logs())
 	router.Use(log.Recovery())
+	router.Use(middleware.Cors())
 	api := router.Group("/api")
 	// LLM API
 	llmseting := api.Group("/llm")
 	llmseting.POST("/add", llm.Create)
 	llmseting.GET("/del", llm.Del)
 	llmseting.POST("/edit", llm.Edit)
-	llmseting.POST("/list", llm.ListByPage)
+	llmseting.Any("/list", llm.ListByPage)
 	// 档案
 	archiveDoc := api.Group("/archive")
 	archiveDoc.POST("/list", archive.ArchiveListByPage)
