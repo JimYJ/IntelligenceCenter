@@ -42,6 +42,7 @@ func Create(c *gin.Context) {
 		response.Err(c, 400, response.ErrOperationFailed)
 		return
 	}
+	response.Success(c, nil)
 }
 
 func Del(c *gin.Context) {
@@ -54,6 +55,7 @@ func Del(c *gin.Context) {
 		response.Err(c, 400, response.ErrOperationFailed)
 		return
 	}
+	response.Success(c, nil)
 }
 
 func Edit(c *gin.Context) {
@@ -95,6 +97,7 @@ func Edit(c *gin.Context) {
 		response.Err(c, 400, response.ErrOperationFailed)
 		return
 	}
+	response.Success(c, nil)
 }
 
 func ListByPage(c *gin.Context) {

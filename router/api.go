@@ -17,10 +17,10 @@ func Api() {
 	api := router.Group("/api")
 	// LLM API
 	llmseting := api.Group("/llm")
-	llmseting.POST("/add", llm.Create)
+	llmseting.Any("/add", llm.Create)
 	llmseting.GET("/del", llm.Del)
 	llmseting.POST("/edit", llm.Edit)
-	llmseting.Any("/list", llm.ListByPage)
+	llmseting.POST("/list", llm.ListByPage)
 	// 档案
 	archiveDoc := api.Group("/archive")
 	archiveDoc.POST("/list", archive.ArchiveListByPage)
