@@ -45,6 +45,7 @@ func Page(totalCount, pageSize, pageNo int) (*PageInfo, int) {
 	pageInfo.TotalPage = totalPage(totalCount, pageSize)
 	if pageInfo.PageNo > pageInfo.TotalPage {
 		pageInfo.PageNo = pageInfo.TotalPage
+		pageNo = pageInfo.TotalPage
 	}
 	return pageInfo, (pageNo - 1) * pageSize
 }
