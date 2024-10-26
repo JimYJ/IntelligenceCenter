@@ -1,6 +1,7 @@
 package archive
 
 import (
+	"IntelligenceCenter/app/common"
 	"IntelligenceCenter/common/sqlite"
 	"IntelligenceCenter/service/log"
 	"fmt"
@@ -18,8 +19,8 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 				a.extraction_mode, 
 				a.api_key_id, 
 				a.extraction_model, 
-				strftime('%s', a.created_at, '+8 hours') created_at,
-				strftime('%s', a.updated_at, '+8 hours') updated_at
+				strftime('%s', a.created_at, '%s') created_at,
+				strftime('%s', a.updated_at, '%s') updated_at
 			FROM 
 				archive a
 			LEFT JOIN 
@@ -29,7 +30,7 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 				a.id 
 			LIMIT ? ,?;`
 	format := "%Y-%m-%d %H:%M:%S"
-	sql = fmt.Sprintf(sql, format, format, searchSql)
+	sql = fmt.Sprintf(sql, format, common.GetTimeZone(), format, common.GetTimeZone(), searchSql)
 	list := make([]*Archive, 0)
 	err := sqlite.Conn().Select(&list, sql, start, pageSize)
 	if err != nil {
@@ -77,8 +78,8 @@ func docListByPage(start, pageSize int, keyword string) []*ArchiveDoc {
 				ad.translate_content,
 				ad.is_translated,
 				ad.src_url,
-				strftime('%s', ad.created_at, '+8 hours') created_at,
-				strftime('%s', ad.updated_at, '+8 hours') updated_at
+				strftime('%s', ad.created_at, '%s') created_at,
+				strftime('%s', ad.updated_at, '%s') updated_at
 			FROM 
 				archive_docs ad
 			LEFT JOIN 
@@ -88,7 +89,7 @@ func docListByPage(start, pageSize int, keyword string) []*ArchiveDoc {
 			%s
 			LIMIT ? , ?;`
 	format := "%Y-%m-%d %H:%M:%S"
-	sql = fmt.Sprintf(sql, format, format, searchSql)
+	sql = fmt.Sprintf(sql, format, common.GetTimeZone(), format, common.GetTimeZone(), searchSql)
 	list := make([]*ArchiveDoc, 0)
 	err := sqlite.Conn().Select(&list, sql, start, pageSize)
 	if err != nil {
