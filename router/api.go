@@ -15,9 +15,10 @@ func Api() {
 	router.Use(log.Recovery())
 	router.Use(middleware.Cors())
 	api := router.Group("/api")
+	api.OPTIONS(":any")
 	// LLM API
 	llmseting := api.Group("/llm")
-	llmseting.Any("/add", llm.Create)
+	llmseting.POST("/add", llm.Create)
 	llmseting.GET("/del", llm.Del)
 	llmseting.POST("/edit", llm.Edit)
 	llmseting.POST("/list", llm.ListByPage)
