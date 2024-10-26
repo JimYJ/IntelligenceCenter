@@ -18,8 +18,8 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 				a.extraction_mode, 
 				a.api_key_id, 
 				a.extraction_model, 
-				a.created_at, 
-				a.updated_at
+				strftime('%s', a.created_at, '+8 hours') created_at,
+				strftime('%s', a.updated_at, '+8 hours') updated_at
 			FROM 
 				archive a
 			LEFT JOIN 
@@ -28,7 +28,8 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 			GROUP BY 
 				a.id 
 			LIMIT ? ,?;`
-	sql = fmt.Sprintf(sql, searchSql)
+	format := "%Y-%m-%d %H:%M:%S"
+	sql = fmt.Sprintf(sql, format, format, searchSql)
 	list := make([]*Archive, 0)
 	err := sqlite.Conn().Select(&list, sql, start, pageSize)
 	if err != nil {
@@ -76,8 +77,8 @@ func docListByPage(start, pageSize int, keyword string) []*ArchiveDoc {
 				ad.translate_content,
 				ad.is_translated,
 				ad.src_url,
-				ad.created_at,
-				ad.updated_at
+				strftime('%s', ad.created_at, '+8 hours') created_at,
+				strftime('%s', ad.updated_at, '+8 hours') updated_at
 			FROM 
 				archive_docs ad
 			LEFT JOIN 
@@ -86,7 +87,8 @@ func docListByPage(start, pageSize int, keyword string) []*ArchiveDoc {
 				archive a ON ad.archive_id = a.id
 			%s
 			LIMIT ? , ?;`
-	sql = fmt.Sprintf(sql, searchSql)
+	format := "%Y-%m-%d %H:%M:%S"
+	sql = fmt.Sprintf(sql, format, format, searchSql)
 	list := make([]*ArchiveDoc, 0)
 	err := sqlite.Conn().Select(&list, sql, start, pageSize)
 	if err != nil {
