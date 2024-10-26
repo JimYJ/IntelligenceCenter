@@ -24,3 +24,7 @@ type ArchiveDoc struct {
 	CreatedAt         string  `json:"created_at" db:"created_at"`                 // 创建时间
 	UpdatedAt         *string `json:"updated_at" db:"updated_at"`                 // 更新时间
 }
+
+type Keyword struct {
+	Keyword string `db:"-" json:"keyword"` // 描述信息
+}

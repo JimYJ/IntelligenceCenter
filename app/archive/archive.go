@@ -8,9 +8,13 @@ import (
 )
 
 func ArchiveListByPage(c *gin.Context) {
-	keyword := c.Query("keyword")
+	k := &Keyword{}
+	err := c.ShouldBindJSON(k)
+	if err != nil {
+		response.Err(c, 400, "请求参数不正确")
+	}
 	pageNo, pageSize := common.PageParams(c)
-	totalCount := archiveCountRecord(keyword)
+	totalCount := archiveCountRecord(k.Keyword)
 	if totalCount == 0 {
 		response.Success(c, &common.PageInfo{
 			PageNo:      pageNo,
@@ -21,16 +25,20 @@ func ArchiveListByPage(c *gin.Context) {
 		return
 	}
 	pager, start := common.Page(totalCount, pageSize, pageNo)
-	list := archiveListByPage(start, pageSize, keyword)
+	list := archiveListByPage(start, pageSize, k.Keyword)
 	pager.Data = list
 	response.Success(c, pager)
 }
 
 func DocListByPage(c *gin.Context) {
-	keyword := c.Query("keyword")
+	k := &Keyword{}
+	err := c.ShouldBindJSON(k)
+	if err != nil {
+		response.Err(c, 400, "请求参数不正确")
+	}
 	id := c.Query("id")
 	pageNo, pageSize := common.PageParams(c)
-	totalCount := docCountRecord(keyword)
+	totalCount := docCountRecord(k.Keyword)
 	if totalCount == 0 {
 		response.Success(c, &common.PageInfo{
 			PageNo:      pageNo,
@@ -41,7 +49,7 @@ func DocListByPage(c *gin.Context) {
 		return
 	}
 	pager, start := common.Page(totalCount, pageSize, pageNo)
-	list := docListByPage(start, pageSize, id, keyword)
+	list := docListByPage(start, pageSize, id, k.Keyword)
 	pager.Data = list
 	response.Success(c, pager)
 }

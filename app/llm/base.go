@@ -3,7 +3,6 @@ package llm
 import (
 	"IntelligenceCenter/app/common"
 	"IntelligenceCenter/response"
-	"IntelligenceCenter/service/log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -102,14 +101,11 @@ func Edit(c *gin.Context) {
 }
 
 func ListByPage(c *gin.Context) {
-	// k := c.PostForm("k")
-	// log.Info(c.PostForm("k"), c.Query("k"))
 	k := &Keyword{}
 	err := c.ShouldBindJSON(k)
 	if err != nil {
 		response.Err(c, 400, "请求参数不正确")
 	}
-	log.Info(k.Keyword)
 	pageNo, pageSize := common.PageParams(c)
 	totalCount := countRecord(k.Keyword)
 	if totalCount == 0 {

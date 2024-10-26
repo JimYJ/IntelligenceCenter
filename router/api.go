@@ -25,6 +25,8 @@ func Api() {
 	llmseting.POST("/list", llm.ListByPage)
 	// 档案
 	archiveDoc := api.Group("/archive")
+	archiveDoc.OPTIONS(":any", common.Ok)
+	archiveDoc.OPTIONS("/doc/:any", common.Ok)
 	archiveDoc.POST("/list", archive.ArchiveListByPage)
 	archiveDoc.POST("/doc/list", archive.DocListByPage)
 	err := router.Run(":6061")

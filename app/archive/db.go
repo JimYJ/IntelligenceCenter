@@ -32,7 +32,12 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 	format := "%Y-%m-%d %H:%M:%S"
 	sql = fmt.Sprintf(sql, format, common.GetTimeZone(), format, common.GetTimeZone(), searchSql)
 	list := make([]*Archive, 0)
-	err := sqlite.Conn().Select(&list, sql, start, pageSize)
+	var err error
+	if len(keyword) != 0 {
+		err = sqlite.Conn().Select(&list, sql, keyword, start, pageSize)
+	} else {
+		err = sqlite.Conn().Select(&list, sql, start, pageSize)
+	}
 	if err != nil {
 		log.Info("查询档案表出错:", err)
 		return list
@@ -53,7 +58,12 @@ func archiveCountRecord(keyword string) int {
 				%s;`
 	sql = fmt.Sprintf(sql, searchSql)
 	var num int
-	err := sqlite.Conn().Get(&num, sql)
+	var err error
+	if len(keyword) != 0 {
+		err = sqlite.Conn().Get(&num, sql, keyword)
+	} else {
+		err = sqlite.Conn().Get(&num, sql)
+	}
 	if err != nil {
 		log.Info("查询档案总数出错:", err)
 		return num
