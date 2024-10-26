@@ -21,12 +21,14 @@ func ArchiveListByPage(c *gin.Context) {
 			TotalRecord: 0,
 			TotalPage:   0,
 			PageSize:    pageSize,
+			Keyword:     k.Keyword,
 		})
 		return
 	}
 	pager, start := common.Page(totalCount, pageSize, pageNo)
 	list := archiveListByPage(start, pageSize, k.Keyword)
 	pager.Data = list
+	pager.Keyword = k.Keyword
 	response.Success(c, pager)
 }
 
@@ -45,11 +47,13 @@ func DocListByPage(c *gin.Context) {
 			TotalRecord: 0,
 			TotalPage:   0,
 			PageSize:    pageSize,
+			Keyword:     k.Keyword,
 		})
 		return
 	}
 	pager, start := common.Page(totalCount, pageSize, pageNo)
 	list := docListByPage(start, pageSize, id, k.Keyword)
 	pager.Data = list
+	pager.Keyword = k.Keyword
 	response.Success(c, pager)
 }

@@ -114,11 +114,13 @@ func ListByPage(c *gin.Context) {
 			TotalRecord: 0,
 			TotalPage:   0,
 			PageSize:    pageSize,
+			Keyword:     k.Keyword,
 		})
 		return
 	}
 	pager, start := common.Page(totalCount, pageSize, pageNo)
 	list := listByPage(start, pageSize, k.Keyword)
 	pager.Data = list
+	pager.Keyword = k.Keyword
 	response.Success(c, pager)
 }

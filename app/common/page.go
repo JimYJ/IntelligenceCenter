@@ -18,11 +18,12 @@ var (
 
 // 分页信息
 type PageInfo struct {
-	PageNo      int `json:"current"`
-	TotalRecord int `json:"total"`
-	TotalPage   int `json:"pages"`
-	PageSize    int `json:"size"`
-	Data        any `json:"records"`
+	PageNo      int    `json:"current"`
+	TotalRecord int    `json:"total"`
+	TotalPage   int    `json:"pages"`
+	PageSize    int    `json:"size"`
+	Keyword     string `json:"keyword"`
+	Data        any    `json:"records"`
 }
 
 // totalPage 总页数
