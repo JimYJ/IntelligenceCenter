@@ -30,6 +30,7 @@ func ArchiveListByPage(c *gin.Context) {
 
 func DocListByPage(c *gin.Context) {
 	keyword := c.Query("keyword")
+	id := c.Query("id")
 	pageNo, pageSize := common.PageParams(c)
 	totalCount := docCountRecord(keyword)
 	if totalCount == 0 {
@@ -42,7 +43,7 @@ func DocListByPage(c *gin.Context) {
 		return
 	}
 	pager, start := common.Page(totalCount, pageSize, pageNo)
-	list := docListByPage(start, pageSize, keyword)
+	list := docListByPage(start, pageSize, id, keyword)
 	pager.Data = list
 	response.Success(c, pager)
 }

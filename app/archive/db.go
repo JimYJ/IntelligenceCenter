@@ -61,10 +61,10 @@ func archiveCountRecord(keyword string) int {
 	return num
 }
 
-func docListByPage(start, pageSize int, keyword string) []*ArchiveDoc {
+func docListByPage(start, pageSize int, id, keyword string) []*ArchiveDoc {
 	var searchSql string
 	if len(keyword) != 0 {
-		searchSql = "where doc_name Like CONCAT('%',?,'%')"
+		searchSql = " AND doc_name Like CONCAT('%',?,'%')"
 	}
 	sql := `SELECT 
 				ad.id,
@@ -86,14 +86,14 @@ func docListByPage(start, pageSize int, keyword string) []*ArchiveDoc {
 				task t ON ad.task_id = t.id
 			LEFT JOIN 
 				archive a ON ad.archive_id = a.id
-			%s
+			where ad.archive_id = ? %s
 			LIMIT ? , ?;`
 	format := "%Y-%m-%d %H:%M:%S"
 	sql = fmt.Sprintf(sql, format, common.GetTimeZone(), format, common.GetTimeZone(), searchSql)
 	list := make([]*ArchiveDoc, 0)
-	err := sqlite.Conn().Select(&list, sql, start, pageSize)
+	err := sqlite.Conn().Select(&list, sql, id, start, pageSize)
 	if err != nil {
-		log.Info("查询档案表出错:", err)
+		log.Info("查询文档表出错:", err)
 		return list
 	}
 	return list
