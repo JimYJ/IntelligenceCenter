@@ -3,6 +3,7 @@ package archive
 import (
 	"IntelligenceCenter/app/common"
 	"IntelligenceCenter/response"
+	"IntelligenceCenter/service/log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,7 @@ func ArchiveListByPage(c *gin.Context) {
 	pager, start := common.Page(totalCount, pageSize, pageNo)
 	list := archiveListByPage(start, pageSize, keyword)
 	pager.Data = list
+	log.Info(pager.Data)
 	response.Success(c, pager)
 }
 

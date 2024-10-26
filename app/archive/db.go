@@ -2,14 +2,14 @@ package archive
 
 import (
 	"IntelligenceCenter/common/sqlite"
+	"IntelligenceCenter/service/log"
 	"fmt"
-	"log"
 )
 
 func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 	var searchSql string
 	if len(keyword) != 0 {
-		searchSql = "where archive_name Like CONCAT('%',?,'%')"
+		searchSql = "where a.archive_name Like CONCAT('%',?,'%')"
 	}
 	sql := `SELECT 
 				a.id, 
@@ -32,7 +32,7 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 	list := make([]*Archive, 0)
 	err := sqlite.Conn().Select(&list, sql, start, pageSize)
 	if err != nil {
-		log.Println("查询档案表出错:", err)
+		log.Info("查询档案表出错:", err)
 		return list
 	}
 	return list
@@ -53,7 +53,7 @@ func archiveCountRecord(keyword string) int {
 	var num int
 	err := sqlite.Conn().Get(&num, sql)
 	if err != nil {
-		log.Println("查询档案总数出错:", err)
+		log.Info("查询档案总数出错:", err)
 		return num
 	}
 	return num
@@ -90,7 +90,7 @@ func docListByPage(start, pageSize int, keyword string) []*ArchiveDoc {
 	list := make([]*ArchiveDoc, 0)
 	err := sqlite.Conn().Select(&list, sql, start, pageSize)
 	if err != nil {
-		log.Println("查询档案表出错:", err)
+		log.Info("查询档案表出错:", err)
 		return list
 	}
 	return list
@@ -111,7 +111,7 @@ func docCountRecord(keyword string) int {
 	var num int
 	err := sqlite.Conn().Get(&num, sql)
 	if err != nil {
-		log.Println("查询档案总数出错:", err)
+		log.Info("查询档案总数出错:", err)
 		return num
 	}
 	return num
