@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func save(r *Request) bool {
+func create(r *Request) bool {
 	_, err := sqlite.Conn().Exec("INSERT INTO llm_api_settings (name,api_type,api_url,api_key,timeout,request_rate_limit,remark) VALUES (?,?,?,?,?,?,?)",
 		r.Name, r.ApiType, r.ApiURL, r.ApiKey, r.Timeout, r.RequestRateLimit, r.Remark)
 	if err != nil {

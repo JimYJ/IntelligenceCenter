@@ -12,7 +12,7 @@ func Cors() gin.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		// w.Header().Set("Access-Control-Allow-Origin", origin)
-		w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, POST")
+		w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 		w.Header().Add("Access-Control-Allow-Headers", "Access-Token")
 		c.Next()

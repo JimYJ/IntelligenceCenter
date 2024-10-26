@@ -38,7 +38,7 @@ func Create(c *gin.Context) {
 		response.Err(c, 400, response.ErrRequestRateLimitInvalid)
 		return
 	}
-	if !save(r) {
+	if !create(r) {
 		response.Err(c, 400, response.ErrOperationFailed)
 		return
 	}
