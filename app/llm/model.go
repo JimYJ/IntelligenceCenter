@@ -11,3 +11,7 @@ type Request struct {
 	RequestRateLimit int     `db:"request_rate_limit" json:"request_rate_limit,string"` // 每秒请求上限
 	Remark           *string `db:"remark" json:"remark"`                                // 描述信息
 }
+
+type Keyword struct {
+	Keyword string `db:"-" json:"keyword"` // 描述信息
+}

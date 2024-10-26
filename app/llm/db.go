@@ -63,7 +63,12 @@ func listByPage(start, pageSize int, keyword string) []*Request {
 				LIMIT ?,?;`
 	sql = fmt.Sprintf(sql, searchSql)
 	list := make([]*Request, 0)
-	err := sqlite.Conn().Select(&list, sql, start, pageSize)
+	var err error
+	if len(keyword) != 0 {
+		err = sqlite.Conn().Select(&list, sql, keyword, keyword, keyword, start, pageSize)
+	} else {
+		err = sqlite.Conn().Select(&list, sql, start, pageSize)
+	}
 	if err != nil {
 		log.Info("查询llm设置表出错:", err)
 		return list
@@ -84,7 +89,12 @@ func countRecord(keyword string) int {
 				%s;`
 	sql = fmt.Sprintf(sql, searchSql)
 	var num int
-	err := sqlite.Conn().Get(&num, sql)
+	var err error
+	if len(keyword) != 0 {
+		err = sqlite.Conn().Get(&num, sql, keyword, keyword, keyword)
+	} else {
+		err = sqlite.Conn().Get(&num, sql)
+	}
 	if err != nil {
 		log.Info("查询llm设置总数出错:", err)
 		return num
