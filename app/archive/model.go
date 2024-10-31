@@ -11,6 +11,26 @@ type Archive struct {
 	UpdatedAt       *string `json:"updated_at" db:"updated_at"`             // 更新时间，使用指针以支持 null
 }
 
+type ArchiveData struct {
+	ArchiveName     string `json:"archive_name" db:"archive_name"`         // 档案名称
+	LLMSettingName  string `json:"name" db:"llm_setting_name"`             // LLM设置名称
+	FileCount       int    `json:"file_count" db:"-"`                      // 档案文件数
+	ExtractionMode  uint8  `json:"extraction_mode" db:"extraction_mode"`   // 提取模式
+	ExtractionModel string `json:"extraction_model" db:"extraction_model"` // 提取模型
+	TaskCount       int    `json:"task_count" db:"-"`                      // 关联任务总数
+	ActiveTaskCount int    `json:"active_task_count" db:"-"`               // 关联活跃任务总数
+}
+
+type ArchiveTask struct {
+	ArchiveName     string `json:"archive_name" db:"archive_name"`         // 档案名称
+	LLMSettingName  string `json:"name" db:"llm_setting_name"`             // LLM设置名称
+	FileCount       int    `json:"file_count" db:"-"`                      // 档案文件数
+	ExtractionMode  uint8  `json:"extraction_mode" db:"extraction_mode"`   // 提取模式
+	ExtractionModel string `json:"extraction_model" db:"extraction_model"` // 提取模型
+	TaskCount       int    `json:"task_count" db:"-"`                      // 关联任务总数
+	ActiveTaskCount int    `json:"active_task_count" db:"-"`               // 关联活跃任务总数
+}
+
 type ArchiveDoc struct {
 	ID                int     `json:"id" db:"id"`                                 // 主键
 	DocName           string  `json:"doc_name" db:"doc_name"`                     // 文档名称

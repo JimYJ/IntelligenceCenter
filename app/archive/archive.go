@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// 档案分页
 func ArchiveListByPage(c *gin.Context) {
 	k := &Keyword{}
 	err := c.ShouldBindJSON(k)
@@ -32,6 +33,15 @@ func ArchiveListByPage(c *gin.Context) {
 	response.Success(c, pager)
 }
 
+// 档案信息
+func ArchiveInfo(c *gin.Context) {
+	id := c.Query("id")
+	data := archiveInfo(id)
+	data.FileCount = docCountRecord(id, "")
+
+}
+
+// 文档分页
 func DocListByPage(c *gin.Context) {
 	k := &Keyword{}
 	err := c.ShouldBindJSON(k)
@@ -40,7 +50,7 @@ func DocListByPage(c *gin.Context) {
 	}
 	id := c.Query("id")
 	pageNo, pageSize := common.PageParams(c)
-	totalCount := docCountRecord(k.Keyword)
+	totalCount := docCountRecord(id, k.Keyword)
 	if totalCount == 0 {
 		response.Success(c, &common.PageInfo{
 			PageNo:      pageNo,

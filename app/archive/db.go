@@ -110,16 +110,16 @@ func docListByPage(start, pageSize int, id, keyword string) []*ArchiveDoc {
 }
 
 // 获取记录总数
-func docCountRecord(keyword string) int {
+func docCountRecord(id, keyword string) int {
 	var searchSql string
 	if len(keyword) != 0 {
-		searchSql = "where doc_name Like CONCAT('%',?,'%')"
+		searchSql = " AND doc_name Like CONCAT('%',?,'%')"
 	}
 	sql := `SELECT
 				count(1)
 			FROM
 				archive_docs 
-				%s;`
+			where ad.archive_id = ? %s;`
 	sql = fmt.Sprintf(sql, searchSql)
 	var num int
 	err := sqlite.Conn().Get(&num, sql)
@@ -129,3 +129,83 @@ func docCountRecord(keyword string) int {
 	}
 	return num
 }
+
+// 档案相关信息
+func archiveInfo(id string) *ArchiveData {
+	sql := `SELECT
+				a.extraction_mode,
+				a.extraction_model,
+				las.api_type,
+				las.name llm_setting_name 
+			FROM
+				archive a
+				LEFT JOIN llm_api_settings las ON las.id = a.api_key_id 
+			WHERE
+				a.id = ?
+			GROUP BY
+				a.id;`
+	sql = fmt.Sprintf(sql)
+	archiveData := &ArchiveData{}
+	var err error
+	sqlite.Conn().Get(archiveData, sql)
+	if err != nil {
+		log.Info("查询档案信息出错:", err)
+		return archiveData
+	}
+	return archiveData
+}
+
+// 获取记录总数
+func archiveTask(id string) int {
+	sql := `SELECT
+				count(1)
+			FROM
+				task 
+			where ad.archive_id = ?;`
+	var num int
+	err := sqlite.Conn().Get(&num, sql, id)
+	if err != nil {
+		log.Info("查询档案关联任务数出错:", err)
+		return num
+	}
+	return num
+}
+
+// 获取记录总数
+func archiveActiveTask(id string) int {
+	sql := `SELECT
+				count(1)
+			FROM
+				task 
+			where ad.archive_id = ?
+				AND task_status = ?;`
+	var num int
+	err := sqlite.Conn().Get(&num, sql, id, 1)
+	if err != nil {
+		log.Info("查询档案关联任务数出错:", err)
+		return num
+	}
+	return num
+}
+
+// // 档案相关信息
+// func archiveTask(id string) *ArchiveData {
+// 	sql := `SELECT
+// 				task_status,
+// 				COUNT(1) count
+// 			FROM
+// 				task
+// 			WHERE
+// 				archive_id = ?
+// 			GROUP BY
+// 				task_status;`
+// 	sql = fmt.Sprintf(sql)
+// 	archiveData := &ArchiveData{}
+// 	var err error
+// 	sqlite.Conn().Get(archiveData, sql)
+// 	if err != nil {
+// 		log.Info("查询档案信息出错:", err)
+// 		return archiveData
+// 	}
+// 	return archiveData
+// }
