@@ -38,7 +38,9 @@ func ArchiveInfo(c *gin.Context) {
 	id := c.Query("id")
 	data := archiveInfo(id)
 	data.FileCount = docCountRecord(id, "")
-
+	data.TaskCount = archiveTask(id, -1)
+	data.ActiveTaskCount = archiveTask(id, 1)
+	response.Success(c, data)
 }
 
 // 文档分页

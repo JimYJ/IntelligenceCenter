@@ -144,7 +144,6 @@ func archiveInfo(id string) *ArchiveData {
 				a.id = ?
 			GROUP BY
 				a.id;`
-	sql = fmt.Sprintf(sql)
 	archiveData := &ArchiveData{}
 	var err error
 	sqlite.Conn().Get(archiveData, sql)
@@ -156,31 +155,25 @@ func archiveInfo(id string) *ArchiveData {
 }
 
 // 获取记录总数
-func archiveTask(id string) int {
-	sql := `SELECT
-				count(1)
-			FROM
-				task 
-			where ad.archive_id = ?;`
-	var num int
-	err := sqlite.Conn().Get(&num, sql, id)
-	if err != nil {
-		log.Info("查询档案关联任务数出错:", err)
-		return num
+func archiveTask(id string, status int8) int {
+	var statusSql string
+	if status > 0 {
+		statusSql = " AND task_status = ?"
 	}
-	return num
-}
-
-// 获取记录总数
-func archiveActiveTask(id string) int {
 	sql := `SELECT
 				count(1)
 			FROM
 				task 
 			where ad.archive_id = ?
-				AND task_status = ?;`
+				%s;`
+	sql = fmt.Sprintf(sql, statusSql)
 	var num int
-	err := sqlite.Conn().Get(&num, sql, id, 1)
+	params := make([]any, 0)
+	params = append(params, id)
+	if status > 0 {
+		params = append(params, status)
+	}
+	err := sqlite.Conn().Get(&num, sql, params...)
 	if err != nil {
 		log.Info("查询档案关联任务数出错:", err)
 		return num
