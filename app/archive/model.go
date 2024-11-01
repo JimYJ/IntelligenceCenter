@@ -8,7 +8,7 @@ type Archive struct {
 	ApiKeyID        int     `json:"api_key_id" db:"api_key_id"`             // llm_api_settings 表ID
 	ExtractionModel string  `json:"extraction_model" db:"extraction_model"` // 提取模型
 	LLMSettingName  string  `json:"llm_setting_name" db:"llm_setting_name"` // LLM设置名称
-	ApiType         uint8   `json:"api_type,string" db:"api_type"`          // API类型 1-智能小助手 Api 2-Ollama
+	ApiType         uint8   `json:"api_type" db:"api_type"`                 // API类型 1-智能小助手 Api 2-Ollama
 	CreatedAt       string  `json:"created_at" db:"created_at"`             // 创建时间
 	UpdatedAt       *string `json:"updated_at" db:"updated_at"`             // 更新时间，使用指针以支持 null
 }
