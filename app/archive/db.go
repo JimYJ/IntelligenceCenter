@@ -101,7 +101,6 @@ func docListByPage(start, pageSize int, id, keyword string) []*ArchiveDoc {
 	sql = fmt.Sprintf(sql, format, common.GetTimeZone(), format, common.GetTimeZone(), searchSql)
 	var list []*ArchiveDoc
 	err := sqlite.Conn().Select(&list, sql, id, start, pageSize)
-	log.Info(list)
 	if err != nil {
 		log.Info("查询文档表出错:", err)
 		return list
