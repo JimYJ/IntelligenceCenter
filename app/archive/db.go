@@ -58,12 +58,11 @@ func archiveCountRecord(keyword string) int {
 				%s;`
 	sql = fmt.Sprintf(sql, searchSql)
 	var num int
-	var err error
+	params := make([]any, 0)
 	if len(keyword) != 0 {
-		err = sqlite.Conn().Get(&num, sql, keyword)
-	} else {
-		err = sqlite.Conn().Get(&num, sql)
+		params = append(params, keyword)
 	}
+	err := sqlite.Conn().Get(&num, sql, params...)
 	if err != nil {
 		log.Info("查询档案总数出错:", err)
 		return num
@@ -118,11 +117,17 @@ func docCountRecord(id, keyword string) int {
 	sql := `SELECT
 				count(1)
 			FROM
-				archive_docs 
-			where ad.archive_id = ? %s;`
+				archive_docs ad
+			where ad.archive_id = ? 
+            %s;`
 	sql = fmt.Sprintf(sql, searchSql)
 	var num int
-	err := sqlite.Conn().Get(&num, sql)
+	params := make([]any, 0)
+	params = append(params, id)
+	if len(keyword) != 0 {
+		params = append(params, keyword)
+	}
+	err := sqlite.Conn().Get(&num, sql, params...)
 	if err != nil {
 		log.Info("查询档案总数出错:", err)
 		return num
@@ -146,7 +151,7 @@ func archiveInfo(id string) *ArchiveData {
 				a.id;`
 	archiveData := &ArchiveData{}
 	var err error
-	sqlite.Conn().Get(archiveData, sql)
+	sqlite.Conn().Get(archiveData, sql, id)
 	if err != nil {
 		log.Info("查询档案信息出错:", err)
 		return archiveData
@@ -164,7 +169,7 @@ func archiveTask(id string, status int8) int {
 				count(1)
 			FROM
 				task 
-			where ad.archive_id = ?
+			where archive_id = ?
 				%s;`
 	sql = fmt.Sprintf(sql, statusSql)
 	var num int
@@ -180,25 +185,3 @@ func archiveTask(id string, status int8) int {
 	}
 	return num
 }
-
-// // 档案相关信息
-// func archiveTask(id string) *ArchiveData {
-// 	sql := `SELECT
-// 				task_status,
-// 				COUNT(1) count
-// 			FROM
-// 				task
-// 			WHERE
-// 				archive_id = ?
-// 			GROUP BY
-// 				task_status;`
-// 	sql = fmt.Sprintf(sql)
-// 	archiveData := &ArchiveData{}
-// 	var err error
-// 	sqlite.Conn().Get(archiveData, sql)
-// 	if err != nil {
-// 		log.Info("查询档案信息出错:", err)
-// 		return archiveData
-// 	}
-// 	return archiveData
-// }
