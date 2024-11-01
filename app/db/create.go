@@ -51,6 +51,7 @@ var (
 							"origin_content" text,                                     -- 文档原始内容
 							"extraction_content" text,                                 -- 提取后内容
 							"translate_content" text,                                  -- 翻译后内容
+							"is_extracted" BOOLEAN NOT NULL DEFAULT 0,                 -- 是否被提取 0否1是
 							"is_translated" BOOLEAN NOT NULL DEFAULT 0,                -- 是否被翻译 0否1是
 							"src_url" text,                                            -- 来源网址/来源文档地址
 							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间

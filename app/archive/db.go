@@ -13,11 +13,11 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 		searchSql = "where a.archive_name Like CONCAT('%',?,'%')"
 	}
 	sql := `SELECT 
-				a.id, 
+				a.id,
 				a.archive_name, 
 				COUNT(ad.id) AS file_count,
-				a.extraction_mode, 
-				a.api_key_id, 
+				a.extraction_mode,
+				a.api_key_id,
 				a.extraction_model, 
 				strftime('%s', a.created_at, '%s') created_at,
 				strftime('%s', a.updated_at, '%s') updated_at
@@ -26,12 +26,12 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 			LEFT JOIN 
 				archive_docs ad ON ad.archive_id = a.id
 			%s
-			GROUP BY 
-				a.id 
+			GROUP BY
+				a.id
 			LIMIT ? ,?;`
 	format := "%Y-%m-%d %H:%M:%S"
 	sql = fmt.Sprintf(sql, format, common.GetTimeZone(), format, common.GetTimeZone(), searchSql)
-	list := make([]*Archive, 0)
+	var list []*Archive
 	params := make([]any, 0)
 	if len(keyword) != 0 {
 		params = append(params, keyword)
@@ -75,32 +75,33 @@ func docListByPage(start, pageSize int, id, keyword string) []*ArchiveDoc {
 	if len(keyword) != 0 {
 		searchSql = " AND doc_name Like CONCAT('%',?,'%')"
 	}
-	sql := `SELECT 
+	sql := `SELECT
 				ad.id,
 				ad.doc_name,
-				ad.task_id, 
 				t.task_name,
-				ad.archive_id, 
 				a.archive_name,
-				ad.origin_content,
-				ad.extraction_content,
-				ad.translate_content,
+                ad.is_extracted,
 				ad.is_translated,
-				ad.src_url,
+                count(dr.id) resource_num, 
 				strftime('%s', ad.created_at, '%s') created_at,
 				strftime('%s', ad.updated_at, '%s') updated_at
 			FROM 
 				archive_docs ad
-			LEFT JOIN 
+			LEFT JOIN
 				task t ON ad.task_id = t.id
-			LEFT JOIN 
+			LEFT JOIN
 				archive a ON ad.archive_id = a.id
-			where ad.archive_id = ? %s
+            LEFT JOIN
+				doc_resource dr ON dr.doc_id = ad.id
+			where ad.archive_id = ?
+                %s
+            group by ad.id
 			LIMIT ? , ?;`
 	format := "%Y-%m-%d %H:%M:%S"
 	sql = fmt.Sprintf(sql, format, common.GetTimeZone(), format, common.GetTimeZone(), searchSql)
-	list := make([]*ArchiveDoc, 0)
+	var list []*ArchiveDoc
 	err := sqlite.Conn().Select(&list, sql, id, start, pageSize)
+	log.Info(list)
 	if err != nil {
 		log.Info("查询文档表出错:", err)
 		return list
@@ -150,8 +151,7 @@ func archiveInfo(id string) *ArchiveData {
 			GROUP BY
 				a.id;`
 	archiveData := &ArchiveData{}
-	var err error
-	sqlite.Conn().Get(archiveData, sql, id)
+	err := sqlite.Conn().Get(archiveData, sql, id)
 	if err != nil {
 		log.Info("查询档案信息出错:", err)
 		return archiveData

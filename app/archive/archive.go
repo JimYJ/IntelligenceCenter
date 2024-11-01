@@ -3,6 +3,7 @@ package archive
 import (
 	"IntelligenceCenter/app/common"
 	"IntelligenceCenter/response"
+	"IntelligenceCenter/service/log"
 
 	"github.com/gin-gonic/gin"
 )
@@ -51,6 +52,7 @@ func DocListByPage(c *gin.Context) {
 		response.Err(c, 400, "请求参数不正确")
 	}
 	id := c.Query("id")
+	log.Info(id)
 	pageNo, pageSize := common.PageParams(c)
 	totalCount := docCountRecord(id, k.Keyword)
 	if totalCount == 0 {
@@ -65,6 +67,7 @@ func DocListByPage(c *gin.Context) {
 	}
 	pager, start := common.Page(totalCount, pageSize, pageNo)
 	list := docListByPage(start, pageSize, id, k.Keyword)
+	log.Info(list)
 	pager.Data = list
 	pager.Keyword = k.Keyword
 	response.Success(c, pager)
