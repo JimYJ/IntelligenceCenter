@@ -19,12 +19,15 @@ func archiveListByPage(start, pageSize int, keyword string) []*Archive {
 				a.extraction_mode,
 				a.api_key_id,
 				a.extraction_model, 
+                las.api_type,
+				las.name llm_setting_name,
 				strftime('%s', a.created_at, '%s') created_at,
 				strftime('%s', a.updated_at, '%s') updated_at
 			FROM 
 				archive a
 			LEFT JOIN 
 				archive_docs ad ON ad.archive_id = a.id
+            LEFT JOIN llm_api_settings las ON las.id = a.api_key_id 
 			%s
 			GROUP BY
 				a.id
