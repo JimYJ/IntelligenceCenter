@@ -28,6 +28,7 @@ func Api() {
 	archiveDoc.OPTIONS(":any", common.Ok)
 	archiveDoc.OPTIONS("/doc/:any", common.Ok)
 	archiveDoc.POST("/list", archive.ArchiveListByPage)
+	archiveDoc.GET("/info", archive.ArchiveInfo)
 	archiveDoc.POST("/doc/list", archive.DocListByPage)
 	err := router.Run(":6061")
 	if err != nil {
