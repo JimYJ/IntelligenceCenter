@@ -100,3 +100,19 @@ func countRecord(keyword string) int {
 	}
 	return num
 }
+
+func list() []*Request {
+	sql := `SELECT
+				id,
+				name,
+				api_type
+			FROM
+				llm_api_settings;`
+	list := make([]*Request, 0)
+	err := sqlite.Conn().Select(&list, sql)
+	if err != nil {
+		log.Info("查询llm设置表出错:", err)
+		return list
+	}
+	return list
+}

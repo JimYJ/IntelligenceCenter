@@ -124,3 +124,36 @@ func ListByPage(c *gin.Context) {
 	pager.Keyword = k.Keyword
 	response.Success(c, pager)
 }
+
+func ListByGroup(c *gin.Context) {
+	list := list()
+	temp := make(map[uint8][]*Request)
+	for _, item := range list {
+		temp[item.ApiType] = append(temp[item.ApiType], item)
+	}
+	tempList := make([]*LLMType, 0)
+	for k, v := range temp {
+		llmType := &LLMType{
+			Value:    k,
+			Label:    getType(k),
+			Children: make([]*Setting, 0),
+		}
+		tempList = append(tempList, llmType)
+		for _, item := range v {
+			llmType.Children = append(llmType.Children, &Setting{
+				Value: item.ID,
+				Label: item.Name,
+			})
+		}
+	}
+	response.Success(c, tempList)
+}
+
+func getType(t uint8) string {
+	if t == 1 {
+		return "OpenAI API"
+	} else if t == 2 {
+		return "OLlama API"
+	}
+	return ""
+}

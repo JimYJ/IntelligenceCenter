@@ -35,7 +35,7 @@ func ArchiveListByPage(c *gin.Context) {
 
 // 档案列表
 func ArchiveList(c *gin.Context) {
-	response.Success(c, archiveList)
+	response.Success(c, archiveList())
 }
 
 // 档案信息
