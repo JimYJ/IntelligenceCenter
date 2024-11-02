@@ -33,6 +33,11 @@ func ArchiveListByPage(c *gin.Context) {
 	response.Success(c, pager)
 }
 
+// 档案列表
+func ArchiveList(c *gin.Context) {
+	response.Success(c, archiveList)
+}
+
 // 档案信息
 func ArchiveInfo(c *gin.Context) {
 	id := c.Query("id")
