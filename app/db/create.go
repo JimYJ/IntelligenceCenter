@@ -79,6 +79,7 @@ var (
 						"cycle_type" INTEGER NOT NULL DEFAULT 1,                   -- 周期类型 1-每日 2-每周
 						"week_days" varchar(20),                                   -- 指定周几执行，可多选，英文逗号隔开
 						"exec_time" time,                                          -- 执行时间
+						"enable_advanced_settings" BOOLEAN NOT NULL DEFAULT 0,     -- 启用进阶设置 0关闭 1启用
 						"task_status" BOOLEAN NOT NULL DEFAULT 1,                  -- 任务状态 0关闭 1启用
 						"enable_filter" BOOLEAN NOT NULL DEFAULT 0,                -- 启用匹配过滤器 0关闭 1启用
 						"domain_match" text,                                       -- 域名匹配过滤器 为空则不生效
@@ -90,7 +91,6 @@ var (
 						"global_scraping_depth" integer NOT NULL,                  -- 抓取深度
 						"request_rate_limit" integer NOT NULL,                     -- 每秒请求上限
 						"use_proxy_ip_pool" boolean NOT NULL DEFAULT 0,            -- 使用代理IP池
-						"extraction_mode" boolean NOT NULL,                        -- 抽取模式 1精准抽取 2智能抽取(混合精准抽取)
 						"api_settings_id" integer,                                 -- API设置表ID
 						"api_model" varchar(128),                                  -- API指定LLM模型
 						"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间

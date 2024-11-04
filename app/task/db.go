@@ -24,14 +24,14 @@ func createtask(task *Task) bool {
             global_scraping_depth,
             request_rate_limit,
             use_proxy_ip_pool,
-            extraction_mode,
+            enable_advanced_settings,
             api_settings_id,
             api_model
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err := sqlite.Conn().Exec(sql,
 		task.ArchiveID, task.TaskName, task.CrawlURL, task.ExecType, task.CycleType, task.WeekDays, task.ExecTime,
 		task.EnableFilter, task.DomainMatch, task.PathMatch, task.CrawlOption, task.CrawlType, task.ConcurrentCount,
-		task.ScrapingInterval, task.GlobalScrapingDepth, task.RequestRateLimit, task.UseProxyIPPool, task.ExtractionMode,
+		task.ScrapingInterval, task.GlobalScrapingDepth, task.RequestRateLimit, task.UseProxyIPPool, task.EnableAdvancedSettings,
 		task.APISettingsID, task.APIModel)
 	if err != nil {
 		log.Info("创建任务出错:", err)
