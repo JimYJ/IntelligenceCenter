@@ -27,6 +27,18 @@ func Create(c *gin.Context) {
 		response.Err(c, 400, "执行类型不正确")
 		return
 	}
+	if task.ExecType == 2 && task.CycleType > 2 {
+		response.Err(c, 400, "执行周期设置不正确")
+		return
+	}
+	if task.CycleType == 2 && len(task.WeekDays) == 0 {
+		response.Err(c, 400, "执行周期是每周执行时，执行的每周日期不可为空")
+		return
+	}
+	if task.ExecType == 2 && len(task.ExecTime) == 0 {
+		response.Err(c, 400, "执行周期是周期循环时，执行时间不可为空")
+		return
+	}
 	if createtask(task) {
 		response.Success(c, nil)
 	} else {
