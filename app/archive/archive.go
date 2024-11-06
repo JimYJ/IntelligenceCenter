@@ -8,8 +8,8 @@ import (
 )
 
 // 档案分页
-func ArchiveListByPage(c *gin.Context) {
-	k := &Keyword{}
+func ListByPage(c *gin.Context) {
+	k := &common.Keyword{}
 	err := c.ShouldBindJSON(k)
 	if err != nil {
 		response.Err(c, 400, "请求参数不正确")
@@ -34,12 +34,12 @@ func ArchiveListByPage(c *gin.Context) {
 }
 
 // 档案列表
-func ArchiveList(c *gin.Context) {
+func List(c *gin.Context) {
 	response.Success(c, archiveList())
 }
 
 // 档案信息
-func ArchiveInfo(c *gin.Context) {
+func Info(c *gin.Context) {
 	id := c.Query("id")
 	data := archiveInfo(id)
 	data.FileCount = docCountRecord(id, "")
@@ -50,7 +50,7 @@ func ArchiveInfo(c *gin.Context) {
 
 // 文档分页
 func DocListByPage(c *gin.Context) {
-	k := &Keyword{}
+	k := &common.Keyword{}
 	err := c.ShouldBindJSON(k)
 	if err != nil {
 		response.Err(c, 400, "请求参数不正确")

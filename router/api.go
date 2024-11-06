@@ -29,14 +29,15 @@ func Api() {
 	archiveDoc := api.Group("/archive")
 	archiveDoc.OPTIONS(":any", common.Ok)
 	archiveDoc.OPTIONS("/doc/:any", common.Ok)
-	archiveDoc.POST("/list", archive.ArchiveListByPage)
-	archiveDoc.GET("/list/select", archive.ArchiveList)
-	archiveDoc.GET("/info", archive.ArchiveInfo)
+	archiveDoc.POST("/list", archive.ListByPage)
+	archiveDoc.GET("/list/select", archive.List)
+	archiveDoc.GET("/info", archive.Info)
 	archiveDoc.POST("/doc/list", archive.DocListByPage)
 	// 任务
 	taskApi := api.Group("/task")
 	taskApi.OPTIONS(":any", common.Ok)
 	taskApi.POST("/create", task.Create)
+	taskApi.POST("/list", task.ListByPage)
 	err := router.Run(":6061")
 	if err != nil {
 		log.Logger.Println(err)

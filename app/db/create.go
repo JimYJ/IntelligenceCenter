@@ -74,7 +74,7 @@ var (
 						"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
 						"archive_id" INTEGER NOT NULL,                             -- 指定归档的档案ID
 						"task_name" varchar(128) NOT NULL,                         -- 任务名称
-						"crawl_mode" BOOLEAN NOT NULL DEFAULT 1,                   -- 抓取地址，多个地址换行分割
+						"crawl_mode" INTEGER NOT NULL DEFAULT 1,                   -- 抓取地址，多个地址换行分割
 						"crawl_url" text NOT NULL,                                 -- 抓取地址，多个地址换行分割
 						"exec_type" INTEGER NOT NULL DEFAULT 1,                    -- 执行类型 1-立即执行 2-周期循环
 						"cycle_type" INTEGER NOT NULL DEFAULT 1,                   -- 周期类型 1-每日 2-每周

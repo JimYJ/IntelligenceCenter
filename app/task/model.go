@@ -1,10 +1,11 @@
 package task
 
 type Task struct {
-	// ID                  int        `json:"id" db:"id"`                                       // 主键
 	// ExtractionMode         bool     `json:"extraction_mode" db:"extraction_mode"`                   // 抽取模式 1精准抽取 2智能抽取
+	ID                     int      `json:"id" db:"id"`                                             // 主键
 	ArchiveOption          uint8    `json:"archive_option,string" db:"-"`                           // 1新建档案 2选择档案
 	ArchiveID              int      `json:"archive_id" db:"archive_id"`                             // 指定归档的档案ID
+	ArchiveName            string   `json:"archive_name" db:"archive_name"`                         // 档案名称
 	TaskName               string   `json:"task_name" db:"task_name"`                               // 任务名称
 	CrawlMode              uint8    `json:"crawl_mode,string" db:"crawl_mode"`                      // 抓取模式 1地址抓取 2描述搜索抓取
 	CrawlURL               string   `json:"crawl_url" db:"crawl_url"`                               // 抓取地址或抓取描述
@@ -26,5 +27,9 @@ type Task struct {
 	RequestRateLimit       *int     `json:"request_rate_limit" db:"request_rate_limit"`             // 每秒请求上限
 	UseProxyIPPool         *bool    `json:"use_proxy_ip_pool" db:"use_proxy_ip_pool"`               // 使用代理IP池
 	APISettingsID          *int     `json:"api_settings_id" db:"api_settings_id"`                   // API设置表ID
-	APIModel               *string  `json:"api_model" db:"api_model"`                               // API指定LLM模型
+	APIModel               *string  `json:"extraction_model" db:"extraction_model"`                 // API指定LLM模型
+	ApiType                uint8    `json:"api_type" db:"api_type"`                                 // API类型 1-OpenAI API Api 2-Ollama
+	LLMSettingName         string   `json:"llm_setting_name" db:"llm_setting_name"`                 // LLM设置名称
+	CreatedAt              string   `json:"created_at" db:"created_at"`                             // 更新时间
+	UpdatedAt              string   `json:"updated_at" db:"updated_at"`                             // 创建时间
 }

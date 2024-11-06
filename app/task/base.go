@@ -2,6 +2,7 @@ package task
 
 import (
 	"IntelligenceCenter/app/archive"
+	"IntelligenceCenter/app/common"
 	"IntelligenceCenter/common/utils"
 	"IntelligenceCenter/response"
 	"IntelligenceCenter/service/log"
@@ -74,4 +75,30 @@ func Create(c *gin.Context) {
 	} else {
 		response.Err(c, 500, response.ErrOperationFailed)
 	}
+}
+
+// 档案分页
+func ListByPage(c *gin.Context) {
+	k := &common.Keyword{}
+	err := c.ShouldBindJSON(k)
+	if err != nil {
+		response.Err(c, 400, "请求参数不正确")
+	}
+	pageNo, pageSize := common.PageParams(c)
+	totalCount := taskCount(-1, k.Keyword)
+	if totalCount == 0 {
+		response.Success(c, &common.PageInfo{
+			PageNo:      pageNo,
+			TotalRecord: 0,
+			TotalPage:   0,
+			PageSize:    pageSize,
+			Keyword:     k.Keyword,
+		})
+		return
+	}
+	pager, start := common.Page(totalCount, pageSize, pageNo)
+	list := taskListByPage(start, pageSize, k.Keyword)
+	pager.Data = list
+	pager.Keyword = k.Keyword
+	response.Success(c, pager)
 }
