@@ -3,6 +3,7 @@ package task
 import (
 	"IntelligenceCenter/response"
 	"IntelligenceCenter/service/log"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,10 +36,14 @@ func Create(c *gin.Context) {
 		response.Err(c, 400, "执行周期是每周执行时，执行的每周日期不可为空")
 		return
 	}
+	if len(task.WeekDays) > 0 {
+		strings.Join(task.WeekDays, ",")
+	}
 	if task.ExecType == 2 && len(task.ExecTime) == 0 {
 		response.Err(c, 400, "执行周期是周期循环时，执行时间不可为空")
 		return
 	}
+
 	if createtask(task) {
 		response.Success(c, nil)
 	} else {

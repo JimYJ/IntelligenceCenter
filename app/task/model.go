@@ -8,7 +8,8 @@ type Task struct {
 	CrawlURL               string   `json:"crawl_url" db:"crawl_url"`                               // 抓取地址，多个地址换行分割
 	ExecType               uint8    `json:"exec_type,string" db:"exec_type"`                        // 执行类型 1-立即执行 2-周期循环
 	CycleType              uint8    `json:"cycle_type,string" db:"cycle_type"`                      // 周期类型 1-每日 2-每周
-	WeekDays               []string `json:"week_days" db:"week_days"`                               // 指定周几执行，可多选，英文逗号隔开
+	WeekDays               []string `json:"week_days" db:"-"`                                       // 指定周几执行，可多选
+	WeekDaysStr            string   `json:"-" db:"week_days"`                                       // 指定周几执行，可多选，英文逗号隔开
 	ExecTime               string   `json:"exec_time" db:"exec_time"`                               // 执行时间
 	EnableAdvancedSettings bool     `json:"enable_advanced_settings" db:"enable_advanced_settings"` // 启用进阶设置
 	TaskStatus             bool     `json:"task_status" db:"task_status"`                           // 任务状态
