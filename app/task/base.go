@@ -1,6 +1,8 @@
 package task
 
 import (
+	"IntelligenceCenter/app/archive"
+	"IntelligenceCenter/common/utils"
 	"IntelligenceCenter/response"
 	"IntelligenceCenter/service/log"
 	"strings"
@@ -20,6 +22,10 @@ func Create(c *gin.Context) {
 		response.Err(c, 400, "任务名称不可为空")
 		return
 	}
+	if task.CrawlMode > 2 {
+		response.Err(c, 400, "抓取模式不正确")
+		return
+	}
 	if len(task.CrawlURL) == 0 {
 		response.Err(c, 400, "信息抓取网址不可为空")
 		return
@@ -37,13 +43,32 @@ func Create(c *gin.Context) {
 		return
 	}
 	if len(task.WeekDays) > 0 {
-		strings.Join(task.WeekDays, ",")
+		task.WeekDaysStr = strings.Join(task.WeekDays, ",")
 	}
 	if task.ExecType == 2 && len(task.ExecTime) == 0 {
 		response.Err(c, 400, "执行周期是周期循环时，执行时间不可为空")
 		return
 	}
-
+	if task.APISettingsID == nil || *task.APISettingsID == 0 {
+		response.Err(c, 400, "选择内容提取模型的API设置不可为空")
+		return
+	}
+	if task.APIModel == nil || len(*task.APIModel) == 0 {
+		response.Err(c, 400, "提取模型不可为空")
+		return
+	}
+	if task.CrawlMode == 1 {
+		list := strings.Split(task.CrawlURL, "\n")
+		for _, item := range list {
+			if !utils.CheckURL(item) {
+				response.Err(c, 400, "使用地址抓取模式时，抓取网页地址每行必须是http://或https://为前缀")
+				return
+			}
+		}
+	}
+	if task.ArchiveOption == 1 {
+		task.ArchiveID = int(archive.Create(task.TaskName))
+	}
 	if createtask(task) {
 		response.Success(c, nil)
 	} else {

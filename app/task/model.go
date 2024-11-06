@@ -3,9 +3,11 @@ package task
 type Task struct {
 	// ID                  int        `json:"id" db:"id"`                                       // 主键
 	// ExtractionMode         bool     `json:"extraction_mode" db:"extraction_mode"`                   // 抽取模式 1精准抽取 2智能抽取
+	ArchiveOption          uint8    `json:"archive_option,string" db:"-"`                           // 1新建档案 2选择档案
 	ArchiveID              int      `json:"archive_id" db:"archive_id"`                             // 指定归档的档案ID
 	TaskName               string   `json:"task_name" db:"task_name"`                               // 任务名称
-	CrawlURL               string   `json:"crawl_url" db:"crawl_url"`                               // 抓取地址，多个地址换行分割
+	CrawlMode              uint8    `json:"crawl_mode,string" db:"crawl_mode"`                      // 抓取模式 1地址抓取 2描述搜索抓取
+	CrawlURL               string   `json:"crawl_url" db:"crawl_url"`                               // 抓取地址或抓取描述
 	ExecType               uint8    `json:"exec_type,string" db:"exec_type"`                        // 执行类型 1-立即执行 2-周期循环
 	CycleType              uint8    `json:"cycle_type,string" db:"cycle_type"`                      // 周期类型 1-每日 2-每周
 	WeekDays               []string `json:"week_days" db:"-"`                                       // 指定周几执行，可多选

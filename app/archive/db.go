@@ -193,3 +193,19 @@ func archiveTask(id string, status int8) int {
 	}
 	return num
 }
+
+// 创建
+func Create(name string) int64 {
+	sql := `INSERT INTO "archive" ( "archive_name" ) VALUES ( ? );`
+	rows, err := sqlite.Conn().Exec(sql, name)
+	if err != nil {
+		log.Info("创建档案出错:", err)
+		return -1
+	}
+	lastID, err := rows.LastInsertId()
+	if err != nil {
+		log.Info("获取新档案ID出错:", err)
+		return -1
+	}
+	return lastID
+}

@@ -9,6 +9,7 @@ func createtask(task *Task) bool {
 	sql := `INSERT INTO task (
             archive_id,
             task_name,
+			crawl_mode,
             crawl_url,
             exec_type,
             cycle_type,
@@ -27,9 +28,9 @@ func createtask(task *Task) bool {
             enable_advanced_settings,
             api_settings_id,
             api_model
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err := sqlite.Conn().Exec(sql,
-		task.ArchiveID, task.TaskName, task.CrawlURL, task.ExecType, task.CycleType, task.WeekDaysStr, task.ExecTime,
+		task.ArchiveID, task.TaskName, task.CrawlMode, task.CrawlURL, task.ExecType, task.CycleType, task.WeekDaysStr, task.ExecTime,
 		task.EnableFilter, task.DomainMatch, task.PathMatch, task.CrawlOption, task.CrawlType, task.ConcurrentCount,
 		task.ScrapingInterval, task.GlobalScrapingDepth, task.RequestRateLimit, task.UseProxyIPPool, task.EnableAdvancedSettings,
 		task.APISettingsID, task.APIModel)
