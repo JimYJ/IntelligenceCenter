@@ -98,6 +98,11 @@ func ListByPage(c *gin.Context) {
 	}
 	pager, start := common.Page(totalCount, pageSize, pageNo)
 	list := taskListByPage(start, pageSize, k.Keyword)
+	for _, item := range list {
+		if len(item.WeekDaysStr) != 0 {
+			item.WeekDays = strings.Split(item.WeekDaysStr, ",")
+		}
+	}
 	pager.Data = list
 	pager.Keyword = k.Keyword
 	response.Success(c, pager)
