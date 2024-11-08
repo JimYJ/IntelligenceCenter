@@ -93,6 +93,7 @@ var (
 						"request_rate_limit" integerL,                             -- 每秒请求上限
 						"use_proxy_ip_pool" boolean DEFAULT 0,                     -- 使用代理IP池
 						"api_settings_id" integer,                                 -- API设置表ID
+						"api_settings_id_list" varchar(128),                       -- API设置表ID(前端用)
 						"api_model" varchar(128),                                  -- API指定LLM模型
 						"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
 						"updated_at" datetime                                      -- 更新时间

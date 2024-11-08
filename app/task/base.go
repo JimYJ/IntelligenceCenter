@@ -50,10 +50,12 @@ func Create(c *gin.Context) {
 		response.Err(c, 400, "执行周期是周期循环时，执行时间不可为空")
 		return
 	}
-	if task.APISettingsID == nil || *task.APISettingsID == 0 {
+	if len(task.APISettingsIDList) == 0 {
 		response.Err(c, 400, "选择内容提取模型的API设置不可为空")
 		return
 	}
+	task.APISettingsIDStr = strings.Join(utils.ConvertIntsToStrings(task.APISettingsIDList), ",")
+	task.APISettingsID = task.APISettingsIDList[len(task.APISettingsIDList)-1]
 	if task.APIModel == nil || len(*task.APIModel) == 0 {
 		response.Err(c, 400, "提取模型不可为空")
 		return
@@ -82,7 +84,7 @@ func ListByPage(c *gin.Context) {
 	k := &common.Keyword{}
 	err := c.ShouldBindJSON(k)
 	if err != nil {
-		response.Err(c, 400, "请求参数不正确")
+		response.Err(c, 400, response.ErrInvalidRequestParam)
 	}
 	pageNo, pageSize := common.PageParams(c)
 	totalCount := taskCount(-1, k.Keyword)
@@ -101,6 +103,14 @@ func ListByPage(c *gin.Context) {
 	for _, item := range list {
 		if len(item.WeekDaysStr) != 0 {
 			item.WeekDays = strings.Split(item.WeekDaysStr, ",")
+		}
+	}
+	for _, item := range list {
+		if len(item.APISettingsIDStr) != 0 {
+			item.APISettingsIDList, err = utils.ConvertStringsToInts(strings.Split(item.APISettingsIDStr, ","))
+			if err != nil {
+				response.Err(c, 500, response.ErrOperationFailed)
+			}
 		}
 	}
 	pager.Data = list

@@ -26,7 +26,9 @@ type Task struct {
 	GlobalScrapingDepth    *int     `json:"global_scraping_depth" db:"global_scraping_depth"`       // 抓取深度
 	RequestRateLimit       *int     `json:"request_rate_limit" db:"request_rate_limit"`             // 每秒请求上限
 	UseProxyIPPool         *bool    `json:"use_proxy_ip_pool" db:"use_proxy_ip_pool"`               // 使用代理IP池
-	APISettingsID          *int     `json:"api_settings_id" db:"api_settings_id"`                   // API设置表ID
+	APISettingsIDList      []int    `json:"api_settings_id" db:"-"`                                 // API设置表ID
+	APISettingsID          int      `json:"-" db:"api_settings_id"`                                 // API设置表ID
+	APISettingsIDStr       string   `json:"-" db:"api_settings_id_list"`                            // API设置表ID 字符串 英文逗号隔开
 	APIModel               *string  `json:"extraction_model" db:"extraction_model"`                 // API指定LLM模型
 	ApiType                uint8    `json:"api_type" db:"api_type"`                                 // API类型 1-OpenAI API Api 2-Ollama
 	LLMSettingName         string   `json:"llm_setting_name" db:"llm_setting_name"`                 // LLM设置名称

@@ -29,13 +29,14 @@ func createtask(task *Task) bool {
             use_proxy_ip_pool,
             enable_advanced_settings,
             api_settings_id,
+			api_settings_id_list,
             api_model
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 	_, err := sqlite.Conn().Exec(sql,
 		task.ArchiveID, task.TaskName, task.CrawlMode, task.CrawlURL, task.ExecType, task.CycleType, task.WeekDaysStr, task.ExecTime,
 		task.EnableFilter, task.DomainMatch, task.PathMatch, task.CrawlOption, task.CrawlType, task.ConcurrentCount,
 		task.ScrapingInterval, task.GlobalScrapingDepth, task.RequestRateLimit, task.UseProxyIPPool, task.EnableAdvancedSettings,
-		task.APISettingsID, task.APIModel)
+		task.APISettingsID, task.APISettingsIDStr, task.APIModel)
 	if err != nil {
 		log.Info("创建任务出错:", err)
 		return false
@@ -69,6 +70,7 @@ func taskListByPage(start, pageSize int, keyword string) []*Task {
 				t.request_rate_limit,
 				t.use_proxy_ip_pool,
 				t.api_model extraction_model,
+				t.api_settings_id_list,
 				a.archive_name,
 				las.api_type,
 				las.name llm_setting_name,
