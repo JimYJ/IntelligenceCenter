@@ -107,3 +107,14 @@ func ListByPage(c *gin.Context) {
 	pager.Keyword = k.Keyword
 	response.Success(c, pager)
 }
+
+// 任务系统信息
+func TaskInfo(c *gin.Context) {
+	data := &TaskData{}
+	data.TaskCount = taskCount(-1, "")
+	data.ActiveTaskCount = taskCount(1, "")
+	data.ArchiveCount = archive.CountRecord("")
+	data.ArchiveDocsCount = archive.DocCountRecord("", "")
+	data.ArchiveDocsResCount = archive.DocResCountRecord("")
+	response.Success(c, data)
+}

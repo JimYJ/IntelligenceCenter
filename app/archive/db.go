@@ -58,7 +58,7 @@ func archiveList() []*Archive {
 }
 
 // 获取记录总数
-func archiveCountRecord(keyword string) int {
+func CountRecord(keyword string) int {
 	var searchSql string
 	if len(keyword) != 0 {
 		searchSql = "where archive_name Like CONCAT('%',?,'%')"
@@ -124,8 +124,11 @@ func docListByPage(start, pageSize int, id, keyword string) []*ArchiveDoc {
 }
 
 // 获取记录总数
-func docCountRecord(id, keyword string) int {
-	var searchSql string
+func DocCountRecord(id, keyword string) int {
+	var searchSql, idSql string
+	if len(id) != 0 {
+		idSql = " AND ad.archive_id = ? "
+	}
 	if len(keyword) != 0 {
 		searchSql = " AND doc_name Like CONCAT('%',?,'%')"
 	}
@@ -133,18 +136,21 @@ func docCountRecord(id, keyword string) int {
 				count(1)
 			FROM
 				archive_docs ad
-			where ad.archive_id = ? 
+			where 1 = 1
+			%s
             %s;`
-	sql = fmt.Sprintf(sql, searchSql)
+	sql = fmt.Sprintf(sql, idSql, searchSql)
 	var num int
 	params := make([]any, 0)
-	params = append(params, id)
+	if len(id) != 0 {
+		params = append(params, id)
+	}
 	if len(keyword) != 0 {
 		params = append(params, keyword)
 	}
 	err := sqlite.Conn().Get(&num, sql, params...)
 	if err != nil {
-		log.Info("查询档案总数出错:", err)
+		log.Info("查询文档数出错:", err)
 		return num
 	}
 	return num
@@ -208,4 +214,30 @@ func Create(name string) int64 {
 		return -1
 	}
 	return lastID
+}
+
+// 获取记录总数
+func DocResCountRecord(id string) int {
+	var idSql string
+	if len(id) != 0 {
+		idSql = " AND dr.doc_id = ?"
+	}
+	sql := `SELECT
+				count(1)
+			FROM
+				doc_resource dr
+			where 1 = 1
+			%s;`
+	sql = fmt.Sprintf(sql, idSql)
+	var num int
+	params := make([]any, 0)
+	if len(id) != 0 {
+		params = append(params, id)
+	}
+	err := sqlite.Conn().Get(&num, sql, params...)
+	if err != nil {
+		log.Info("查询文档资源总数出错:", err)
+		return num
+	}
+	return num
 }

@@ -33,3 +33,11 @@ type Task struct {
 	CreatedAt              string   `json:"created_at" db:"created_at"`                             // 更新时间
 	UpdatedAt              string   `json:"updated_at" db:"updated_at"`                             // 创建时间
 }
+
+type TaskData struct {
+	ArchiveCount        int `json:"archive_count" db:"-"`          // 档案数量
+	ArchiveDocsCount    int `json:"archive_docs_count" db:"-"`     // 档案文档数量
+	ArchiveDocsResCount int `json:"archive_docs_res_count" db:"-"` // 档案文档资源数
+	TaskCount           int `json:"task_count" db:"-"`             // 关联任务总数
+	ActiveTaskCount     int `json:"active_task_count" db:"-"`      // 关联活跃任务总数
+}

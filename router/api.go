@@ -38,6 +38,7 @@ func Api() {
 	taskApi.OPTIONS(":any", common.Ok)
 	taskApi.POST("/create", task.Create)
 	taskApi.POST("/list", task.ListByPage)
+	taskApi.GET("/info", task.TaskInfo)
 	err := router.Run(":6061")
 	if err != nil {
 		log.Logger.Println(err)

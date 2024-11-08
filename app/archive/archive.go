@@ -15,7 +15,7 @@ func ListByPage(c *gin.Context) {
 		response.Err(c, 400, "请求参数不正确")
 	}
 	pageNo, pageSize := common.PageParams(c)
-	totalCount := archiveCountRecord(k.Keyword)
+	totalCount := CountRecord(k.Keyword)
 	if totalCount == 0 {
 		response.Success(c, &common.PageInfo{
 			PageNo:      pageNo,
@@ -42,7 +42,7 @@ func List(c *gin.Context) {
 func Info(c *gin.Context) {
 	id := c.Query("id")
 	data := archiveInfo(id)
-	data.FileCount = docCountRecord(id, "")
+	data.FileCount = DocCountRecord(id, "")
 	data.TaskCount = archiveTask(id, -1)
 	data.ActiveTaskCount = archiveTask(id, 1)
 	response.Success(c, data)
@@ -57,7 +57,7 @@ func DocListByPage(c *gin.Context) {
 	}
 	id := c.Query("id")
 	pageNo, pageSize := common.PageParams(c)
-	totalCount := docCountRecord(id, k.Keyword)
+	totalCount := DocCountRecord(id, k.Keyword)
 	if totalCount == 0 {
 		response.Success(c, &common.PageInfo{
 			PageNo:      pageNo,
