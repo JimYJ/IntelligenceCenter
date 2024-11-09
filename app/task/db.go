@@ -133,3 +133,51 @@ func taskCount(status int8, keyword string) int {
 	}
 	return num
 }
+
+// 抓取全部可执行任务
+func allTaskForExec() []*Task {
+	sql := `SELECT
+				t.id,
+				t.task_name,
+				t.task_status,
+				t.crawl_mode,
+				t.exec_type,
+				t.cycle_type,
+				t.week_days,
+				t.exec_time,
+				t.enable_advanced_settings,
+				t.enable_filter,
+				t.domain_match,
+				t.path_match,
+				t.crawl_option,
+				t.crawl_type,
+				t.concurrent_count,
+				t.scraping_interval,
+				t.global_scraping_depth,
+				t.request_rate_limit,
+				t.use_proxy_ip_pool,
+				t.api_model extraction_model,
+				t.api_settings_id_list,
+				t.archive_id
+				las.api_type,
+				las.api_url,
+				las.api_key,
+				las.timeout,
+				las.request_rate_limit api_request_rate_limit,
+				las.use_proxy_pool,
+				las.name llm_setting_name
+			WHERE t.task_status = ?
+			FROM
+				task t
+				LEFT JOIN llm_api_settings las ON las.id = t.api_settings_id 
+			GROUP BY
+				t.id
+			ORDER BY `
+	var list []*Task
+	err := sqlite.Conn().Select(&list, sql, 1)
+	if err != nil {
+		log.Info("查询可执行任务表出错:", err)
+		return list
+	}
+	return list
+}

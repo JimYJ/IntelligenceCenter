@@ -2,6 +2,7 @@ package main
 
 import (
 	"IntelligenceCenter/app/db"
+	"IntelligenceCenter/app/task"
 	"IntelligenceCenter/common/utils"
 	"IntelligenceCenter/router"
 	"embed"
@@ -25,6 +26,7 @@ var static embed.FS
 func main() {
 	initDir()
 	db.CheckDatabase()
+	go task.ListenNewTask()
 	go router.Web(static)
 	router.Api()
 }

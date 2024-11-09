@@ -73,6 +73,8 @@ func Create(c *gin.Context) {
 		task.ArchiveID = int(archive.Create(task.TaskName))
 	}
 	if createtask(task) {
+		task.Free()
+		NewTaskChan <- true
 		response.Success(c, nil)
 	} else {
 		response.Err(c, 500, response.ErrOperationFailed)

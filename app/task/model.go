@@ -1,7 +1,22 @@
 package task
 
+import (
+	"IntelligenceCenter/common/utils"
+	"IntelligenceCenter/service/log"
+	"strings"
+	"sync"
+	"time"
+)
+
+var (
+	taskPool = sync.Pool{
+		New: func() interface{} {
+			return &Task{}
+		},
+	}
+)
+
 type Task struct {
-	// ExtractionMode         bool     `json:"extraction_mode" db:"extraction_mode"`                   // 抽取模式 1精准抽取 2智能抽取
 	ID                     int      `json:"id" db:"id"`                                             // 主键
 	ArchiveOption          uint8    `json:"archive_option,string" db:"-"`                           // 1新建档案 2选择档案
 	ArchiveID              int      `json:"archive_id" db:"archive_id"`                             // 指定归档的档案ID
@@ -32,9 +47,110 @@ type Task struct {
 	APIModel               *string  `json:"extraction_model" db:"extraction_model"`                 // API指定LLM模型
 	ApiType                uint8    `json:"api_type" db:"api_type"`                                 // API类型 1-OpenAI API Api 2-Ollama
 	LLMSettingName         string   `json:"llm_setting_name" db:"llm_setting_name"`                 // LLM设置名称
+	ApiURL                 string   `json:"api_url" db:"api_url"`                                   // API 地址
+	ApiKey                 string   `json:"api_key" db:"api_key"`                                   // API 密钥
+	Timeout                int      `json:"timeout" db:"timeout"`                                   // 超时设置(秒),默认30秒
+	APIRequestRateLimit    int      `json:"api_request_rate_limit" db:"api_request_rate_limit"`     // 每秒请求上限
+	ExecTimeSec            int64    `db:"-" json:"-"`                                               // 执行时间戳
 	CreatedAt              string   `json:"created_at" db:"created_at"`                             // 更新时间
 	UpdatedAt              string   `json:"updated_at" db:"updated_at"`                             // 创建时间
 }
+
+// Free 重置任务的状态
+func (t *Task) Free() {
+	t.ID = 0
+	t.ArchiveOption = 0
+	t.ArchiveID = 0
+	t.ArchiveName = ""
+	t.TaskName = ""
+	t.CrawlMode = 0
+	t.CrawlURL = ""
+	t.ExecType = 0
+	t.CycleType = 0
+	t.WeekDays = nil
+	t.WeekDaysStr = ""
+	t.ExecTime = ""
+	t.EnableAdvancedSettings = false
+	t.TaskStatus = false
+	t.EnableFilter = nil
+	t.DomainMatch = nil
+	t.PathMatch = nil
+	t.CrawlOption = nil
+	t.CrawlType = nil
+	t.ConcurrentCount = nil
+	t.ScrapingInterval = nil
+	t.GlobalScrapingDepth = nil
+	t.RequestRateLimit = nil
+	t.UseProxyIPPool = nil
+	t.APISettingsIDList = nil
+	t.APISettingsID = 0
+	t.APISettingsIDStr = ""
+	t.APIModel = nil
+	t.ApiType = 0
+	t.LLMSettingName = ""
+	t.ApiURL = ""
+	t.ApiKey = ""
+	t.Timeout = 0
+	t.APIRequestRateLimit = 0
+	t.CreatedAt = ""
+	t.UpdatedAt = ""
+	t.ExecTimeSec = 0
+	taskPool.Put(t)
+}
+
+func (task *Task) CheckExecTime() bool {
+	if len(task.ExecTime) == 0 {
+		log.Info("脏数据!执行时间错误:", task.ExecTime, task.TaskName)
+		return false
+	}
+	t := time.Now().Local()
+	if task.ExecType == 1 { // 立即执行
+		task.ExecTime = t.Format(time.DateTime)
+		task.ExecTimeSec = t.Unix()
+		return true
+	} else if task.ExecType == 2 {
+		if task.CycleType == 2 {
+			// 每周执行
+			list := strings.Split(task.WeekDaysStr, ",")
+			list2, err := utils.ConvertStringsToInts(list)
+			if err != nil {
+				log.Info("脏数据!每周日期错误:", task.WeekDaysStr, task.TaskName)
+				return false
+			}
+			var confirm bool
+			for _, item := range list2 {
+				if time.Weekday(item) == t.Weekday() {
+					confirm = true
+				}
+			}
+			if !confirm {
+				log.Info("不匹配指定每周日期，跳过:", task.WeekDaysStr, t.Weekday(), task.TaskName)
+				return false
+			}
+		}
+		timerDate := utils.JoinString(t.Format(time.DateOnly), " ", task.ExecTime)
+		timer, err := time.ParseInLocation(time.DateTime, timerDate, time.Local)
+		if err != nil {
+			log.Info("脏数据!执行时间错误:", task.ExecTime, timerDate, task.TaskName)
+			return false
+		}
+		task.ExecTime = timerDate
+		task.ExecTimeSec = timer.Local().Unix()
+		if task.ExecTimeSec < t.Unix() {
+			log.Info("执行时间已经超过当前时间，之后再执行:", task.ExecTime, timerDate, task.TaskName)
+			return false
+		}
+		return true
+	}
+	return false
+}
+
+// 实现排序
+type tasklist []*Task
+
+func (list tasklist) Len() int           { return len(list) }
+func (list tasklist) Swap(i, j int)      { list[i], list[j] = list[j], list[i] }
+func (list tasklist) Less(i, j int) bool { return list[i].ExecTimeSec < list[j].ExecTimeSec }
 
 type TaskData struct {
 	ArchiveCount        int `json:"archive_count" db:"-"`          // 档案数量

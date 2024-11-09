@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // 拼接in查询参数
@@ -37,4 +38,14 @@ func ConvertStringsToInts(strings []string) ([]int, error) {
 		ints = append(ints, num)
 	}
 	return ints, nil
+}
+
+// JoinString 拼接字符串
+func JoinString(s ...string) string {
+	// strings.Join(s, "")
+	var b strings.Builder
+	for _, str := range s {
+		b.WriteString(str)
+	}
+	return b.String()
 }
