@@ -31,7 +31,7 @@ func createtask(task *Task) bool {
             api_settings_id,
 			api_settings_id_list,
             api_model
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?)`
 	_, err := sqlite.Conn().Exec(sql,
 		task.ArchiveID, task.TaskName, task.CrawlMode, task.CrawlURL, task.ExecType, task.CycleType, task.WeekDaysStr, task.ExecTime,
 		task.EnableFilter, task.DomainMatch, task.PathMatch, task.CrawlOption, task.CrawlType, task.ConcurrentCount,
