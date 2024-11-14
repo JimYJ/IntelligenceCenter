@@ -1,14 +1,16 @@
 package sqlite
 
 import (
+	"IntelligenceCenter/common"
 	"IntelligenceCenter/service/log"
+	"fmt"
 	"sync"
 
 	"github.com/jmoiron/sqlx"
 )
 
-const (
-	databasePath = "./database/base.db"
+var (
+	databasePath = fmt.Sprintf("./%s/base.db", common.DBDir)
 )
 
 var (

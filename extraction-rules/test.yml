@@ -1,0 +1,8 @@
+"match-domain": 
+  - www.baidu.com
+  - www.sohu.com
+"content":
+  title: "div.title"
+  context: "div.context"
+  date: "div.date"
+  auther: "div.auther"

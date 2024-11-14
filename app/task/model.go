@@ -162,3 +162,14 @@ type TaskData struct {
 	TaskCount           int `json:"task_count" db:"-"`             // 关联任务总数
 	ActiveTaskCount     int `json:"active_task_count" db:"-"`      // 关联活跃任务总数
 }
+
+type RetryBody struct {
+	Task  *Task  // 任务ID
+	URL   string // 重试地址
+	Count uint   // 重试次数
+}
+
+type extractionRules struct {
+	MatchDomain []string          `yaml:"match-domain"`
+	Content     map[string]string `yaml:"content"`
+}

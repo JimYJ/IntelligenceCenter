@@ -1,6 +1,7 @@
 package log
 
 import (
+	"IntelligenceCenter/common"
 	"fmt"
 	"runtime"
 	"time"
@@ -18,8 +19,7 @@ var (
 func setupLogger() *logrus.Logger {
 	logger := logrus.New()
 	// 获取当前日期并格式化
-	currentDate := time.Now().Format("2006-01-02")
-	logFileName := "logs/" + currentDate + ".log"
+	logFileName := fmt.Sprintf("%s/%s.log", common.LogsDir, time.Now().Format("2006-01-02"))
 
 	// 设置日志输出为文件，按日期分文件
 	logger.SetOutput(&lumberjack.Logger{
