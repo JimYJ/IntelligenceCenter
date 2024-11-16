@@ -22,8 +22,8 @@ func (task *Task) Exec() {
 		} else {
 			task.Crawler = crawler
 		}
-
 	} else if task.CrawlMode == 2 {
+		log.Info("开始执行智能抓取任务:", task.TaskName, task.ID)
 		// TODO AI Agent
 
 	}
