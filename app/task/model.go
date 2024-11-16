@@ -102,16 +102,17 @@ func (t *Task) Free() {
 }
 
 func (task *Task) CheckExecTime() bool {
-	if len(task.ExecTime) == 0 {
-		log.Info("脏数据!执行时间错误:", task.ExecTime, task.TaskName)
-		return false
-	}
 	t := time.Now().Local()
 	if task.ExecType == 1 { // 立即执行
 		task.ExecTime = t.Format(time.DateTime)
 		task.ExecTimeSec = t.Unix()
 		return true
-	} else if task.ExecType == 2 {
+	}
+	if len(task.ExecTime) == 0 {
+		log.Info("脏数据!执行时间错误:", task.ExecTime, task.TaskName)
+		return false
+	}
+	if task.ExecType == 2 {
 		if task.CycleType == 2 {
 			// 每周执行
 			list := strings.Split(task.WeekDaysStr, ",")

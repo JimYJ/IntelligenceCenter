@@ -164,15 +164,13 @@ func allTaskForExec() []*Task {
 				las.api_key,
 				las.timeout,
 				las.request_rate_limit api_request_rate_limit,
-				las.use_proxy_pool,
 				las.name llm_setting_name
 			FROM
 				task t
-				LEFT JOIN llm_api_settings las ON las.id = t.api_settings_id
+			LEFT JOIN llm_api_settings las ON las.id = t.api_settings_id
 			WHERE t.task_status = ?
-			GROUP BY
-				t.id
-			ORDER BY `
+			GROUP BY t.id
+			ORDER BY t.id;`
 	var list []*Task
 	err := sqlite.Conn().Select(&list, sql, 1)
 	if err != nil {
