@@ -151,6 +151,7 @@ func allTaskForExec() []*Task {
 				t.path_match,
 				t.crawl_option,
 				t.crawl_type,
+				t.crawl_url,
 				t.concurrent_count,
 				t.scraping_interval,
 				t.global_scraping_depth,

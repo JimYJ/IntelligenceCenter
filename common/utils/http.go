@@ -14,7 +14,7 @@ func CheckURL(str string) bool {
 func GetHost(str *string) []string {
 	list := make([]string, 0)
 	if str == nil {
-		return list
+		return nil
 	}
 	urlList := strings.Split(*str, "\n")
 	for _, item := range urlList {

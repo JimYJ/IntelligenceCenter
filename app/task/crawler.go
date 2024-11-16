@@ -34,6 +34,7 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	if task.EnableFilter != nil && *task.EnableFilter {
 		// 域名过滤
 		if len(hostList) != 0 {
+			log.Info(hostList)
 			c.AllowedDomains = hostList
 		}
 		// 路径过滤
@@ -58,6 +59,7 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	c.Limit(limitRule)
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
+		log.Info("抓取到链接:", link)
 		// c.Visit(e.Request.AbsoluteURL(link))
 		e.Request.Visit(e.Request.AbsoluteURL(link))
 	})
