@@ -1,6 +1,7 @@
 package task
 
 import (
+	"IntelligenceCenter/service/log"
 	"time"
 
 	"github.com/gocolly/colly/v2"
@@ -14,6 +15,7 @@ var (
 // 任务执行器
 func (task *Task) Exec() {
 	if task.CrawlMode == 1 {
+		log.Info("开始执行地址抓取任务:", task.TaskName, task.ID)
 		if crawler, ok := taskCrawler[task.ID]; !ok {
 			taskCrawler[task.ID] = task.CreateCrawler()
 			task.Crawler = taskCrawler[task.ID]

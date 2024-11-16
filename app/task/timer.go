@@ -17,10 +17,16 @@ var (
 func Listen() {
 	for {
 		task := <-TaskChan
+		if task == nil {
+			log.Info("读取到空任务")
+			continue
+		}
 		now := time.Now().Local()
+		log.Info(task)
 		if task.ExecType == 1 || task.ExecTimeSec >= now.Unix() {
 			log.Info("任务类型是单次立即执行任务或已经超过指定时间，立即执行任务:", task.TaskName, task.ID)
 			go task.Exec()
+			continue
 		}
 		timer := time.NewTimer(time.Unix(task.ExecTimeSec, 0).Sub(now))
 		log.Info("开始等待任务:", task.TaskName, "准备执行时间:", task.ExecTime, "解析后的时间:", time.Unix(task.ExecTimeSec, 0).Format(time.DateTime))
@@ -67,11 +73,14 @@ func Scan() {
 // 清空并重建通道内容
 func coverChan(execList tasklist) {
 	close(TaskChan)
-	for range TaskChan {
-		<-TaskChan
+	if len(TaskChan) > 0 {
+		for range TaskChan {
+			<-TaskChan
+		}
 	}
 	TaskChan = make(chan *Task, chanSize)
 	for i := len(execList) - 1; i >= 0; i-- {
+		log.Info(i)
 		TaskChan <- execList[i]
 	}
 }

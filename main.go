@@ -18,8 +18,9 @@ var static embed.FS
 func main() {
 	initDir()
 	db.CheckDatabase()
+	task.Scan()
 	go task.ListenNewTask()
-	go task.Scan()
+	go task.Listen()
 	go timer.DayTaskFor0AM()
 	go router.Web(static)
 	go task.Retry()
