@@ -23,6 +23,7 @@ func main() {
 	go timer.DayTaskFor0AM()
 	go router.Web(static)
 	go task.Retry()
+	go task.ListenMatch()
 	router.Api()
 }
 

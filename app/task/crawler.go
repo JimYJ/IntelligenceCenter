@@ -1,16 +1,15 @@
 package task
 
 import (
+	"IntelligenceCenter/app/archive"
 	"IntelligenceCenter/app/option"
 	"IntelligenceCenter/common/utils"
 	"IntelligenceCenter/service/log"
-	"fmt"
 	"regexp"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly/v2"
 	"github.com/gocolly/colly/v2/extensions"
 	"github.com/gocolly/colly/v2/proxy"
@@ -63,12 +62,17 @@ func (task *Task) CreateCrawler() *colly.Collector {
 		e.Request.Visit(e.Request.AbsoluteURL(link))
 	})
 
-	// 精准匹配
-	// c.OnHTML("div.entry-content.th-content", func(e *colly.HTMLElement) {
-	// 	// 获取 div 的内容
-	// 	// content := e.Text
-	// 	e.Request.URL.String()
-	// })
+	// 获取标题
+	c.OnHTML("title", func(e *colly.HTMLElement) {
+		docID := archive.CreateDoc(task.ID, task.ArchiveID, e.Text, string(e.Response.Body), e.Request.URL.String())
+		if docID != -1 {
+			extractionChan <- &ExtractionBody{
+				URL:     e.Request.URL.String(),
+				Content: string(e.Response.Body),
+				DocID:   int(docID),
+			}
+		}
+	})
 	c.OnRequest(func(r *colly.Request) {
 		if task.UseProxyIPPool != nil && !*task.UseProxyIPPool {
 			ips, err := utils.GeneratePublicIPs(1, 1)
@@ -82,7 +86,9 @@ func (task *Task) CreateCrawler() *colly.Collector {
 		}
 	})
 	// 处理响应
-	c.OnResponse(task.OnResponse)
+	c.OnResponse(func(r *colly.Response) {
+		r.Ctx.Put("_referer", r.Request.URL.String())
+	})
 	// 设置代理
 	task.setProxy(c)
 	// 设置重试
@@ -91,22 +97,6 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	taskCrawler[task.ID] = c
 	// c.Visit("https://misif.org.my/directory/")
 	return c
-}
-
-func (task *Task) OnResponse(r *colly.Response) {
-	r.Ctx.Put("_referer", r.Request.URL.String())
-
-	// 精准解析
-	html, err := goquery.NewDocumentFromReader(r.Request.Body)
-	if err != nil {
-		log.Info("解析HTML错误:", err)
-	}
-	// Find the review items
-	html.Find(".left-content article .post-title").Each(func(i int, s *goquery.Selection) {
-		// For each item found, get the title
-		title := s.Find("a").Text()
-		fmt.Printf("Review %d: %s\n", i, title)
-	})
 }
 
 // 判断及获取全局设置

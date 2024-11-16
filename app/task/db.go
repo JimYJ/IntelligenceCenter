@@ -158,7 +158,7 @@ func allTaskForExec() []*Task {
 				t.use_proxy_ip_pool,
 				t.api_model extraction_model,
 				t.api_settings_id_list,
-				t.archive_id
+				t.archive_id,
 				las.api_type,
 				las.api_url,
 				las.api_key,
@@ -166,10 +166,10 @@ func allTaskForExec() []*Task {
 				las.request_rate_limit api_request_rate_limit,
 				las.use_proxy_pool,
 				las.name llm_setting_name
-			WHERE t.task_status = ?
 			FROM
 				task t
-				LEFT JOIN llm_api_settings las ON las.id = t.api_settings_id 
+				LEFT JOIN llm_api_settings las ON las.id = t.api_settings_id
+			WHERE t.task_status = ?
 			GROUP BY
 				t.id
 			ORDER BY `

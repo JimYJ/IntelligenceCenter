@@ -241,3 +241,51 @@ func DocResCountRecord(id string) int {
 	}
 	return num
 }
+
+// 创建文档
+func CreateDoc(taskID, archiveID int, name, content, srcUrl string) int64 {
+	sql := `INSERT INTO "archive_docs" (
+				"doc_name", 
+				"task_id", 
+				"archive_id", 
+				"origin_content", 
+				"is_extracted", 
+				"is_translated", 
+				"src_url", 
+			) VALUES (
+				?,  -- 文档名称
+				?,  -- 任务ID
+				?,  -- 档案ID
+				?,  -- 原始内容
+				0,  -- 是否被提取 (0或1)
+				0,  -- 是否被翻译 (0或1)
+				?   -- 来源网址
+			);`
+	rows, err := sqlite.Conn().Exec(sql, name, taskID, archiveID, content, srcUrl)
+	if err != nil {
+		log.Info("创建文档出错:", err)
+		return -1
+	}
+	lastID, err := rows.LastInsertId()
+	if err != nil {
+		log.Info("获取新文档ID出错:", err)
+		return -1
+	}
+	return lastID
+}
+
+// 更新文档
+func UpdateDocByExtraction(docID, apiKeyID int, extractionMode uint8, extractionContent *string, extractionModel string) {
+	sql := `UPDATE "archive_docs" SET
+				"extraction_content" = ?,
+				"extraction_mode" = ?,
+				"api_key_id" = ?,
+				"extraction_model" = ?,
+				"is_extracted" = ?,
+				"updated_at" = CURRENT_TIMESTAMP
+			WHERE "id" = ?;`
+	_, err := sqlite.Conn().Exec(sql, extractionContent, extractionMode, apiKeyID, extractionModel, 1, docID)
+	if err != nil {
+		log.Info("更新文档出错:", err)
+	}
+}
