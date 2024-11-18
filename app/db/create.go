@@ -52,9 +52,9 @@ var (
 							"origin_content" text,                                     -- 文档原始内容
 							"extraction_content" text,                                 -- 提取后内容
 							"translate_content" text,                                  -- 翻译后内容
-							"extraction_mode" integer NOT NULL,                        -- 提取模式 1-精准匹配 2-智能匹配
-							"api_key_id" integer NOT NULL,                             -- llm_api_settings 表ID
-							"extraction_model" varchar(128) NOT NULL,                  -- 提取模型
+							"extraction_mode" integer,                                 -- 提取模式 1-精准匹配 2-智能匹配
+							"api_key_id" integer,                                      -- llm_api_settings 表ID
+							"extraction_model" varchar(128),                           -- 提取模型
 							"is_extracted" BOOLEAN NOT NULL DEFAULT 0,                 -- 是否被提取 0否1是
 							"is_translated" BOOLEAN NOT NULL DEFAULT 0,                -- 是否被翻译 0否1是
 							"src_url" text,                                            -- 来源网址/来源文档地址
@@ -64,7 +64,7 @@ var (
 	docResourceTableSql = `CREATE TABLE "doc_resource" (
 							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
 							"doc_id" INTEGER NOT NULL,                                 -- 文档ID
-							"resource_type" integer NOT NULL,                          -- 资源类型 1-图片 2-PDF 3-word 4-PPT
+							"resource_type" integer NOT NULL,                          -- 资源类型 1-图片: 2-PDF 3-docs 4-PPT 5-Excel 6-magnet 7-telegram邀请链接
 							"resource_path" text NOT NULL,                             -- 资源路径
 							"resource_status" text NOT NULL,                           -- 资源状态 1-未下载 2-已下载
 							"resource_size" integer NOT NULL,                          -- 资源大小(字节数)

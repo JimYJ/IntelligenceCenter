@@ -180,3 +180,15 @@ func allTaskForExec() []*Task {
 	}
 	return list
 }
+
+// 写入资源
+func insertDocResource(docID int64, resourceType int8, resourcePath string, resourceStatus uint8, resourceSize int) error {
+	sql := `INSERT INTO doc_resource (doc_id, resource_type, resource_path, resource_status, resource_size) 
+			VALUES (?, ?, ?, ?, ?)`
+	_, err := sqlite.Conn().Exec(sql, docID, resourceType, resourcePath, resourceStatus, resourceSize)
+	if err != nil {
+		log.Info("插入 doc_resource 表出错:", err)
+		return err
+	}
+	return nil
+}

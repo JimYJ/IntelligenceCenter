@@ -34,7 +34,7 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	if task.EnableFilter != nil && *task.EnableFilter {
 		// 域名过滤
 		if len(hostList) != 0 {
-			log.Info(hostList)
+			log.Info(hostList, len(hostList))
 			c.AllowedDomains = hostList
 		}
 		// 路径过滤
@@ -57,22 +57,25 @@ func (task *Task) CreateCrawler() *colly.Collector {
 		limitRule.RandomDelay = time.Duration(*task.ScrapingInterval) * time.Second
 	}
 	c.Limit(limitRule)
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		link := e.Attr("href")
-		log.Info("抓取到链接:", link)
-		// c.Visit(e.Request.AbsoluteURL(link))
-		e.Request.Visit(e.Request.AbsoluteURL(link))
-	})
-
-	// 获取标题
+	var docID int64
 	c.OnHTML("title", func(e *colly.HTMLElement) {
-		docID := archive.CreateDoc(task.ID, task.ArchiveID, e.Text, string(e.Response.Body), e.Request.URL.String())
+		docID = archive.CreateDoc(task.ID, task.ArchiveID, e.Text, string(e.Response.Body), e.Request.URL.String())
 		if docID != -1 {
 			extractionChan <- &ExtractionBody{
 				URL:     e.Request.URL.String(),
 				Content: string(e.Response.Body),
 				DocID:   int(docID),
 			}
+		}
+	})
+	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+		link := e.Attr("href")
+		// log.Info("抓取到链接:", link)
+		// c.Visit(e.Request.AbsoluteURL(link))
+		if srcType, _ := checkSrcLink(link); srcType != -1 {
+			insertDocResource(docID, srcType, link, 1, 0)
+		} else {
+			e.Request.Visit(e.Request.AbsoluteURL(link))
 		}
 	})
 	c.OnRequest(func(r *colly.Request) {
@@ -190,4 +193,31 @@ func Retry() {
 			taskCrawler[retryInfo.Task.ID].Visit(retryInfo.URL)
 		}
 	}
+}
+
+func checkSrcLink(link string) (int8, string) {
+	extensionsMap := map[string]int8{
+		".jpg":  1,
+		".jpeg": 1,
+		".pdf":  2,
+		".doc":  3,
+		".docx": 3,
+		".wps":  3,
+		".ppt":  4,
+		".pptx": 4,
+		".xls":  5,
+		".xlsx": 5,
+	}
+	if strings.HasPrefix(link, "magnet:") {
+		return 6, link
+	}
+	if strings.HasPrefix(link, "https://t.me/") {
+		return 7, link
+	}
+	for ext, enum := range extensionsMap {
+		if strings.HasSuffix(strings.ToLower(link), ext) {
+			return enum, strings.ToLower(link)
+		}
+	}
+	return -1, ""
 }

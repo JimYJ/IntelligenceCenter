@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"IntelligenceCenter/service/log"
 	"net/url"
 	"strings"
 )
@@ -12,18 +11,13 @@ func CheckURL(str string) bool {
 }
 
 func GetHost(str *string) []string {
-	list := make([]string, 0)
-	if str == nil {
+	if str == nil || len(*str) == 0 {
 		return nil
 	}
+	list := make([]string, 0)
 	urlList := strings.Split(*str, "\n")
 	for _, item := range urlList {
-		parsedURL, err := url.Parse(item)
-		if err != nil {
-			log.Info("解析网址错误:", err)
-			continue
-		}
-		list = append(list, parsedURL.Scheme+parsedURL.Host)
+		list = append(list, strings.TrimSpace(item))
 	}
 	return list
 }

@@ -95,11 +95,11 @@ func docListByPage(start, pageSize int, id, keyword string) []*ArchiveDoc {
                 ad.is_extracted,
 				ad.is_translated,
                 count(dr.id) resource_num, 
-				ad.extraction_mode,
-				ad.api_key_id,
-				ad.extraction_model, 
-                las.api_type,
-				las.name llm_setting_name,
+				IFNULL(ad.extraction_mode,0) extraction_mode,
+				IFNULL(ad.api_key_id,0) api_key_id,
+				IFNULL(ad.extraction_model,0) extraction_model, 
+                IFNULL(las.api_type,0) api_type,
+				IFNULL(las.name,'') llm_setting_name,
 				strftime('%s', ad.created_at, '%s') created_at,
 				strftime('%s', ad.updated_at, '%s') updated_at
 			FROM 
@@ -251,7 +251,7 @@ func CreateDoc(taskID, archiveID int, name, content, srcUrl string) int64 {
 				"origin_content", 
 				"is_extracted", 
 				"is_translated", 
-				"src_url", 
+				"src_url" 
 			) VALUES (
 				?,  -- 文档名称
 				?,  -- 任务ID
