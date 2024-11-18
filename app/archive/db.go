@@ -311,8 +311,7 @@ func GetDocResourceByDocID(docID int64) []*DocResource {
 				resource_path,
 				resource_status,
 				resource_size,
-				created_at,
-				updated_at
+				created_at
 			FROM doc_resource
 			WHERE doc_id = ?`
 	var resources []*DocResource

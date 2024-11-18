@@ -53,12 +53,11 @@ type ArchiveDoc struct {
 }
 
 type DocResource struct {
-	ID             int64   `json:"id" db:"id"`
-	DocID          int64   `json:"doc_id" db:"doc_id"`
-	ResourceType   int8    `json:"resource_type" db:"resource_type"`
-	ResourcePath   string  `json:"resource_path" db:"resource_path"`
-	ResourceStatus uint8   `json:"resource_status" db:"resource_status"`
-	ResourceSize   int     `json:"resource_size" db:"resource_size"`
-	CreatedAt      string  `json:"created_at" db:"created_at"`
-	UpdatedAt      *string `json:"updated_at" db:"updated_at"`
+	ID             int64  `json:"id" db:"id"`
+	DocID          int64  `json:"doc_id" db:"doc_id"`
+	ResourceType   int8   `json:"resource_type" db:"resource_type"`
+	ResourcePath   string `json:"resource_path" db:"resource_path"`
+	ResourceStatus uint8  `json:"resource_status" db:"resource_status"`
+	ResourceSize   int    `json:"resource_size" db:"resource_size"`
+	CreatedAt      string `json:"created_at" db:"created_at"`
 }

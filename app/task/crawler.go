@@ -70,8 +70,9 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	})
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
+		link = e.Request.AbsoluteURL(link)
 		if srcType, _ := checkSrcLink(link); srcType != -1 {
-			// 只做文档内链接去重
+			// 实现查重并保存
 			existingResources := archive.GetDocResourceByDocID(docID)
 			duplicate := false
 			for _, resource := range existingResources {
