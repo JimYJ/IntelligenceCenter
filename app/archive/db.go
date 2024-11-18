@@ -289,3 +289,37 @@ func UpdateDocByExtraction(docID, apiKeyID int, extractionMode uint8, extraction
 		log.Info("更新文档出错:", err)
 	}
 }
+
+// 写入资源
+func SaveDocResource(docID int64, resourceType int8, resourcePath string, resourceStatus uint8, resourceSize int) error {
+	sql := `INSERT INTO doc_resource (doc_id, resource_type, resource_path, resource_status, resource_size) 
+			VALUES (?, ?, ?, ?, ?)`
+	_, err := sqlite.Conn().Exec(sql, docID, resourceType, resourcePath, resourceStatus, resourceSize)
+	if err != nil {
+		log.Info("插入 doc_resource 表出错:", err)
+		return err
+	}
+	return nil
+}
+
+// 获取资源
+func GetDocResourceByDocID(docID int64) []*DocResource {
+	sql := `SELECT
+				id,
+				doc_id,
+				resource_type,
+				resource_path,
+				resource_status,
+				resource_size,
+				created_at,
+				updated_at
+			FROM doc_resource
+			WHERE doc_id = ?`
+	var resources []*DocResource
+	err := sqlite.Conn().Select(&resources, sql, docID)
+	if err != nil {
+		log.Info("查询 doc_resource 表出错:", err)
+		return nil
+	}
+	return resources
+}

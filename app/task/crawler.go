@@ -70,14 +70,24 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	})
 	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
-		// log.Info("抓取到链接:", link)
-		// c.Visit(e.Request.AbsoluteURL(link))
 		if srcType, _ := checkSrcLink(link); srcType != -1 {
-			insertDocResource(docID, srcType, link, 1, 0)
+			// 只做文档内链接去重
+			existingResources := archive.GetDocResourceByDocID(docID)
+			duplicate := false
+			for _, resource := range existingResources {
+				if resource.ResourcePath == link {
+					duplicate = true
+					break
+				}
+			}
+			if !duplicate {
+				archive.SaveDocResource(docID, srcType, link, 1, 0)
+			}
 		} else {
 			e.Request.Visit(e.Request.AbsoluteURL(link))
 		}
 	})
+
 	c.OnRequest(func(r *colly.Request) {
 		if task.UseProxyIPPool != nil && !*task.UseProxyIPPool {
 			ips, err := utils.GeneratePublicIPs(1, 1)
