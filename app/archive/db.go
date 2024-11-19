@@ -274,6 +274,33 @@ func CreateDoc(taskID, archiveID int, name, content, srcUrl string) int64 {
 	return lastID
 }
 
+// 批量创建文档
+func CreateDocBatch(docs []*ArchiveDoc) error {
+	sql := `INSERT INTO "archive_docs" (
+				"doc_name", 
+				"task_id", 
+				"archive_id", 
+				"origin_content", 
+				"is_extracted", 
+				"is_translated", 
+				"src_url"
+			) VALUES (
+				:doc_name,
+				:task_id,
+				:archive_id, 
+				:origin_content,
+				:is_extracted,
+				:is_translated,
+				:src_url
+			);`
+	_, err := sqlite.Conn().NamedExec(sql, docs)
+	if err != nil {
+		log.Info("批量创建文档出错:", err)
+		return err
+	}
+	return nil
+}
+
 // 更新文档
 func UpdateDocByExtraction(docID, apiKeyID int, extractionMode uint8, extractionContent *string, extractionModel string) {
 	sql := `UPDATE "archive_docs" SET

@@ -50,13 +50,14 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	}
 	// 并发和延迟
 	limitRule := &colly.LimitRule{
-		DomainRegexp: `*`,
+		DomainRegexp: `.+`,
 		Parallelism:  *task.ConcurrentCount,
 	}
 	if task.ScrapingInterval != nil && *task.ScrapingInterval > 0 {
 		limitRule.RandomDelay = time.Duration(*task.ScrapingInterval) * time.Second
 	}
-	c.Limit(limitRule)
+	log.Info("并发:", limitRule.Parallelism, "随机延迟:", limitRule.RandomDelay)
+	log.Info("设置并发:", c.Limit(limitRule))
 	var docID int64
 
 	c.OnHTML("title", func(e *colly.HTMLElement) {
@@ -82,13 +83,13 @@ func (task *Task) CreateCrawler() *colly.Collector {
 			}
 		} else {
 			e.Request.Visit(e.Request.AbsoluteURL(link))
+			// c.Visit(e.Request.AbsoluteURL(link))
 		}
 	})
 	c.OnRequest(func(r *colly.Request) {
 		if task.UseProxyIPPool != nil && !*task.UseProxyIPPool {
 			ips, err := utils.GeneratePublicIPs(1, 1)
-			if err != nil {
-				log.Info("X-Real-IP", ips[0].String())
+			if err == nil {
 				r.Headers.Set("X-Real-IP", ips[0].String())
 				r.Headers.Set("x-forwarded-for", ips[0].String())
 			}
