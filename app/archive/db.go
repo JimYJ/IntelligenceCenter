@@ -291,12 +291,12 @@ func UpdateDocByExtraction(docID, apiKeyID int, extractionMode uint8, extraction
 }
 
 // 写入资源
-func SaveDocResource(docID int64, resourceType int8, resourcePath string, resourceStatus uint8, resourceSize int) error {
+func SaveDocResource(resources []*DocResource) error {
 	sql := `INSERT INTO doc_resource (doc_id, resource_type, resource_path, resource_status, resource_size) 
-			VALUES (?, ?, ?, ?, ?)`
-	_, err := sqlite.Conn().Exec(sql, docID, resourceType, resourcePath, resourceStatus, resourceSize)
+			VALUES (:doc_id, :resource_type, :resource_path, :resource_status, :resource_size)`
+	_, err := sqlite.Conn().NamedExec(sql, resources)
 	if err != nil {
-		log.Info("插入 doc_resource 表出错:", err)
+		log.Info("批量插入 doc_resource 表出错:", err)
 		return err
 	}
 	return nil

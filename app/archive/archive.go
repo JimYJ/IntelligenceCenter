@@ -3,9 +3,20 @@ package archive
 import (
 	"IntelligenceCenter/app/common"
 	"IntelligenceCenter/response"
+	"IntelligenceCenter/service/log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
+
+var (
+	DocResourceChan = make(chan *DocResource, 65535)
+	DocResourceQuit = make(chan bool)
+)
+
+func init() {
+	go SaveDocResourceBatch()
+}
 
 // 档案分页
 func ListByPage(c *gin.Context) {
@@ -73,4 +84,41 @@ func DocListByPage(c *gin.Context) {
 	pager.Data = list
 	pager.Keyword = k.Keyword
 	response.Success(c, pager)
+}
+
+// 分批保存资源
+func SaveDocResourceBatch() {
+	var resources []*DocResource
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+	for {
+		select {
+		case resource := <-DocResourceChan:
+			resources = append(resources, resource)
+			if len(resources) >= 1000 {
+				err := SaveDocResource(resources)
+				if err != nil {
+					log.Info("批量保存资源失败:", err)
+				}
+				resources = resources[:0]
+				ticker.Reset(10 * time.Second)
+			}
+		case <-ticker.C:
+			if len(resources) > 0 {
+				err := SaveDocResource(resources)
+				if err != nil {
+					log.Info("批量保存资源失败:", err)
+				}
+				resources = resources[:0]
+			}
+		case <-DocResourceQuit:
+			if len(resources) > 0 {
+				err := SaveDocResource(resources)
+				if err != nil {
+					log.Info("批量保存资源失败:", err)
+				}
+			}
+			return // 退出函数
+		}
+	}
 }

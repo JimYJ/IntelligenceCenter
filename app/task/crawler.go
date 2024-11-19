@@ -58,6 +58,7 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	}
 	c.Limit(limitRule)
 	var docID int64
+
 	c.OnHTML("title", func(e *colly.HTMLElement) {
 		docID = archive.CreateDoc(task.ID, task.ArchiveID, e.Text, string(e.Response.Body), e.Request.URL.String())
 		if docID != -1 {
@@ -72,27 +73,22 @@ func (task *Task) CreateCrawler() *colly.Collector {
 		link := e.Attr("href")
 		link = e.Request.AbsoluteURL(link)
 		if srcType, _ := checkSrcLink(link); srcType != -1 {
-			// 实现查重并保存
-			existingResources := archive.GetDocResourceByDocID(docID)
-			duplicate := false
-			for _, resource := range existingResources {
-				if resource.ResourcePath == link {
-					duplicate = true
-					break
-				}
-			}
-			if !duplicate {
-				archive.SaveDocResource(docID, srcType, link, 1, 0)
+			archive.DocResourceChan <- &archive.DocResource{
+				DocID:          docID,
+				ResourceType:   srcType,
+				ResourcePath:   link,
+				ResourceStatus: 1,
+				ResourceSize:   0,
 			}
 		} else {
 			e.Request.Visit(e.Request.AbsoluteURL(link))
 		}
 	})
-
 	c.OnRequest(func(r *colly.Request) {
 		if task.UseProxyIPPool != nil && !*task.UseProxyIPPool {
 			ips, err := utils.GeneratePublicIPs(1, 1)
 			if err != nil {
+				log.Info("X-Real-IP", ips[0].String())
 				r.Headers.Set("X-Real-IP", ips[0].String())
 				r.Headers.Set("x-forwarded-for", ips[0].String())
 			}
@@ -111,7 +107,6 @@ func (task *Task) CreateCrawler() *colly.Collector {
 	taskRetryCounter[task.ID] = NewRetryCounter(3) // TODO 可以改成界面配置
 	c.OnError(OnError(c, task))
 	taskCrawler[task.ID] = c
-	// c.Visit("https://misif.org.my/directory/")
 	return c
 }
 

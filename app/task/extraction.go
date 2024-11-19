@@ -21,6 +21,7 @@ type ExtractionBody struct {
 
 var (
 	extractionChan = make(chan *ExtractionBody, 65535)
+	RulesList      []*extractionRules
 )
 
 func ListenMatch() {
@@ -126,16 +127,18 @@ func GetDomainFromURL(urlStr string) string {
 }
 
 func getRules() []*extractionRules {
-	list, err := utils.FindFilesBySuffix("./extraction-rules", "yml", "yaml")
-	log.Info(list, err)
-	rulesList := make([]*extractionRules, 0)
-	for _, item := range list {
-		rules := getRulesFiles(item)
-		if rules != nil {
-			rulesList = append(rulesList, rules)
+	if len(RulesList) == 0 {
+		list, err := utils.FindFilesBySuffix("./extraction-rules", "yml", "yaml")
+		log.Info(list, err)
+		RulesList = make([]*extractionRules, 0)
+		for _, item := range list {
+			rules := getRulesFiles(item)
+			if rules != nil {
+				RulesList = append(RulesList, rules)
+			}
 		}
 	}
-	return rulesList
+	return RulesList
 }
 
 func getRulesFiles(path string) *extractionRules {
