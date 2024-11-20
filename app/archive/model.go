@@ -55,6 +55,7 @@ type ArchiveDoc struct {
 type DocResource struct {
 	ID             int64  `json:"id" db:"id"`
 	DocID          int64  `json:"doc_id" db:"doc_id"`
+	ArchiveID      int    `json:"archive_id" db:"archive_id"`
 	ResourceType   int8   `json:"resource_type" db:"resource_type"`
 	ResourcePath   string `json:"resource_path" db:"resource_path"`
 	ResourceStatus uint8  `json:"resource_status" db:"resource_status"`

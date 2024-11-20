@@ -319,8 +319,8 @@ func UpdateDocByExtraction(docID, apiKeyID int, extractionMode uint8, extraction
 
 // 写入资源
 func SaveDocResource(resources []*DocResource) error {
-	sql := `INSERT INTO doc_resource (doc_id, resource_type, resource_path, resource_status, resource_size) 
-			VALUES (:doc_id, :resource_type, :resource_path, :resource_status, :resource_size)`
+	sql := `INSERT INTO doc_resource (doc_id, archive_id, resource_type, resource_path, resource_status, resource_size) 
+			VALUES (:doc_id, :archive_id, :resource_type, :resource_path, :resource_status, :resource_size)`
 	_, err := sqlite.Conn().NamedExec(sql, resources)
 	if err != nil {
 		log.Info("批量插入 doc_resource 表出错:", err)
@@ -334,6 +334,7 @@ func GetDocResourceByDocID(docID int64) []*DocResource {
 	sql := `SELECT
 				id,
 				doc_id,
+				archive_id,
 				resource_type,
 				resource_path,
 				resource_status,

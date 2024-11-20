@@ -57,9 +57,10 @@ func (task *Task) CreateCrawler() *colly.Collector {
 		limitRule.RandomDelay = time.Duration(*task.ScrapingInterval) * time.Second
 	}
 	log.Info("并发:", limitRule.Parallelism, "随机延迟:", limitRule.RandomDelay)
-	log.Info("设置并发:", c.Limit(limitRule))
+	if err := c.Limit(limitRule); err != nil {
+		log.Info("设置并发错误:", err)
+	}
 	var docID int64
-
 	c.OnHTML("title", func(e *colly.HTMLElement) {
 		docID = archive.CreateDoc(task.ID, task.ArchiveID, e.Text, string(e.Response.Body), e.Request.URL.String())
 		if docID != -1 {
@@ -76,13 +77,15 @@ func (task *Task) CreateCrawler() *colly.Collector {
 		if srcType, _ := checkSrcLink(link); srcType != -1 {
 			archive.DocResourceChan <- &archive.DocResource{
 				DocID:          docID,
+				ArchiveID:      task.ArchiveID,
 				ResourceType:   srcType,
 				ResourcePath:   link,
 				ResourceStatus: 1,
 				ResourceSize:   0,
 			}
 		} else {
-			e.Request.Visit(e.Request.AbsoluteURL(link))
+			// log.Info("准备访问链接", link)
+			e.Request.Visit(link)
 			// c.Visit(e.Request.AbsoluteURL(link))
 		}
 	})

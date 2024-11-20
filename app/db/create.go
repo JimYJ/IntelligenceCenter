@@ -64,6 +64,7 @@ var (
 	docResourceTableSql = `CREATE TABLE "doc_resource" (
 							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
 							"doc_id" INTEGER NOT NULL,                                 -- 文档ID
+							"archive_id" INTEGER NOT NULL,                             -- 所属的档案ID
 							"resource_type" integer NOT NULL,                          -- 资源类型 1-图片: 2-PDF 3-docs 4-PPT 5-Excel 6-magnet 7-telegram邀请链接
 							"resource_path" text NOT NULL,                             -- 资源路径
 							"resource_status" integer NOT NULL,                        -- 资源状态 1-未下载 2-已下载
