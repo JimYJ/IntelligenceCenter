@@ -217,6 +217,12 @@ func checkSrcLink(link string) (int8, string) {
 		".pptx": 4,
 		".xls":  5,
 		".xlsx": 5,
+		".zip":  8,
+		".rar":  8,
+		".7z":   8,
+		".gz":   8,
+		".psd":  9,
+		".cdr":  9,
 	}
 	if strings.HasPrefix(link, "magnet:") {
 		return 6, link
