@@ -104,7 +104,7 @@ func ListByPage(c *gin.Context) {
 	k := &Keyword{}
 	err := c.ShouldBindJSON(k)
 	if err != nil {
-		response.Err(c, 400, "请求参数不正确")
+		response.Err(c, 400, response.ErrInvalidRequestParam)
 	}
 	pageNo, pageSize := common.PageParams(c)
 	totalCount := countRecord(k.Keyword)

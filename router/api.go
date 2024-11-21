@@ -33,6 +33,8 @@ func Api() {
 	archiveDoc.GET("/list/select", archive.List)
 	archiveDoc.GET("/info", archive.Info)
 	archiveDoc.POST("/doc/list", archive.DocListByPage)
+	archiveDoc.GET("/doc/info", archive.GetArchiveDocsHandler)
+	archiveDoc.GET("/doc/resource", archive.GetDocResourceList)
 	// 任务
 	taskApi := api.Group("/task")
 	taskApi.OPTIONS(":any", common.Ok)

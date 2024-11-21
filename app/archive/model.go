@@ -44,6 +44,7 @@ type ArchiveDoc struct {
 	LLMSettingName    string  `json:"llm_setting_name" db:"llm_setting_name"`     // LLM设置名称
 	ApiType           uint8   `json:"api_type" db:"api_type"`                     // API类型 1-OpenAI API Api 2-Ollama
 	OriginContent     string  `json:"origin_content" db:"origin_content"`         // 文档原始内容
+	TranslateContent  string  `json:"translate_content" db:"translate_content"`   // 文档原始内容
 	ExtractionContent string  `json:"extraction_content" db:"extraction_content"` // 提取后内容
 	IsExtracted       bool    `json:"is_extracted" db:"is_extracted"`             // 是否被提取 0否1是
 	IsTranslated      bool    `json:"is_translated" db:"is_translated"`           // 是否被翻译 0否1是

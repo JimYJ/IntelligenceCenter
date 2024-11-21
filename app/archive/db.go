@@ -350,3 +350,54 @@ func GetDocResourceByDocID(docID int64) []*DocResource {
 	}
 	return resources
 }
+
+// 查询指定ID的 archive_docs 表记录并联查 task 和 archive 表
+func getArchiveDocByID(docID string) (*ArchiveDoc, error) {
+	sql := `SELECT
+				ad.id,
+				ad.doc_name,
+				ad.task_id,
+				t.task_name,
+				ad.archive_id,
+				a.archive_name,
+				ad.origin_content,
+				IFNULL(ad.extraction_content,"") extraction_content,
+				IFNULL(ad.translate_content,"") translate_content,
+				IFNULL(ad.extraction_mode,0) extraction_mode,
+				IFNULL(ad.api_key_id,-1) api_key_id,
+				IFNULL(ad.extraction_model,"") extraction_model,
+				IFNULL(l.api_type,0) api_type,
+				IFNULL(l.name,"") llm_setting_name,
+				ad.is_extracted,
+				ad.is_translated,
+				ad.src_url,
+				ad.created_at,
+				ad.updated_at
+			FROM archive_docs ad
+			LEFT JOIN task t ON ad.task_id = t.id
+			LEFT JOIN archive a ON ad.archive_id = a.id
+			LEFT JOIN llm_api_settings l ON ad.api_key_id = l.id
+			WHERE ad.id = ?`
+	var archiveDoc ArchiveDoc
+	err := sqlite.Conn().Get(&archiveDoc, sql, docID)
+	if err != nil {
+		log.Info("查询 archive_docs 表出错:", err)
+		return nil, err
+	}
+	return &archiveDoc, nil
+}
+
+// 查询指定 doc_id 的 doc_resource 表记录，只查询 resource_path 字段
+func getResourcePathsByDocID(docID string) ([]string, error) {
+	sql := `SELECT
+				resource_path
+			FROM doc_resource
+			WHERE doc_id = ?`
+	var resourcePaths []string
+	err := sqlite.Conn().Select(&resourcePaths, sql, docID)
+	if err != nil {
+		log.Info("查询 doc_resource 表出错:", err)
+		return nil, err
+	}
+	return resourcePaths, nil
+}

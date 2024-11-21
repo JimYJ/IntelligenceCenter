@@ -20,51 +20,51 @@ func Create(c *gin.Context) {
 		return
 	}
 	if len(task.TaskName) == 0 {
-		response.Err(c, 400, "任务名称不可为空")
+		response.Err(c, 400, response.ErrTaskNameCannotBeEmpty)
 		return
 	}
 	if task.CrawlMode > 2 {
-		response.Err(c, 400, "抓取模式不正确")
+		response.Err(c, 400, response.ErrInvalidCrawlMode)
 		return
 	}
 	if len(task.CrawlURL) == 0 {
-		response.Err(c, 400, "信息抓取网址不可为空")
+		response.Err(c, 400, response.ErrCrawlURLCannotBeEmpty)
 		return
 	}
 	if task.ExecType > 2 {
-		response.Err(c, 400, "执行类型不正确")
+		response.Err(c, 400, response.ErrInvalidExecType)
 		return
 	}
 	if task.ExecType == 2 && task.CycleType > 2 {
-		response.Err(c, 400, "执行周期设置不正确")
+		response.Err(c, 400, response.ErrInvalidCycleType)
 		return
 	}
 	if task.CycleType == 2 && len(task.WeekDays) == 0 {
-		response.Err(c, 400, "执行周期是每周执行时，执行的每周日期不可为空")
+		response.Err(c, 400, response.ErrWeekDaysCannotBeEmpty)
 		return
 	}
 	if len(task.WeekDays) > 0 {
 		task.WeekDaysStr = strings.Join(task.WeekDays, ",")
 	}
 	if task.ExecType == 2 && len(task.ExecTime) == 0 {
-		response.Err(c, 400, "执行周期是周期循环时，执行时间不可为空")
+		response.Err(c, 400, response.ErrExecTimeCannotBeEmpty)
 		return
 	}
 	if len(task.APISettingsIDList) == 0 {
-		response.Err(c, 400, "选择内容提取模型的API设置不可为空")
+		response.Err(c, 400, response.ErrAPISettingsCannotBeEmpty)
 		return
 	}
 	task.APISettingsIDStr = strings.Join(utils.ConvertIntsToStrings(task.APISettingsIDList), ",")
 	task.APISettingsID = task.APISettingsIDList[len(task.APISettingsIDList)-1]
 	if task.APIModel == nil || len(*task.APIModel) == 0 {
-		response.Err(c, 400, "提取模型不可为空")
+		response.Err(c, 400, response.ErrAPIModelCannotBeEmpty)
 		return
 	}
 	if task.CrawlMode == 1 {
 		list := strings.Split(task.CrawlURL, "\n")
 		for _, item := range list {
 			if !utils.CheckURL(item) {
-				response.Err(c, 400, "使用地址抓取模式时，抓取网页地址每行必须是http://或https://为前缀")
+				response.Err(c, 400, response.ErrInvalidCrawlURLPrefix)
 				return
 			}
 		}
