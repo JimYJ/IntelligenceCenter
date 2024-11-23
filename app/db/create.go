@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	createSqlList = []string{optionTableSql, llmSettingTableSql, archiveTableSql, archiveDocsTableSql, docResourceTableSql, taskTableSql}
+	createSqlList = []string{optionTableSql, llmSettingTableSql, archiveTableSql, archiveDocsTableSql, docResourceTableSql, taskTableSql, taskFlowTableSql}
 
-	checkTableSql = ""
+	checkTableSql = "SELECT name FROM sqlite_master WHERE type='table' AND name = ?"
 
 	optionTableSql = `CREATE TABLE "option" (
 						"id" integer NOT NULL PRIMARY KEY AUTOINCREMENT ,    -- 主键
@@ -99,11 +99,18 @@ var (
 						"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
 						"updated_at" datetime                                      -- 更新时间
 					);`
+	taskFlowTableSql = `CREATE TABLE "task_flow" (
+							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
+							"task_id" INTEGER NOT NULL,                                -- 任务ID
+							"status" INTEGER NOT NULL,                                 -- 任务状态 (0: 创建触发, 1: 定时触发, 2: 执行结束, 3: 手动关闭, 4: 手动开启)
+							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
+							"updated_at" datetime                                      -- 更新时间
+						);`
 )
 
 // 初始化数据库
-func createDatabase() {
-	for _, item := range createSqlList {
+func createDatabase(list []string) {
+	for _, item := range list {
 		_, err := sqlite.Conn().Exec(item)
 		if err != nil {
 			log.Info("创建初始化表失败", err)
@@ -114,17 +121,32 @@ func createDatabase() {
 
 // 检查数据库
 func CheckDatabase() {
-	var tableExists bool
-	err := sqlite.Conn().Get(&tableExists, checkTableSql)
-	if err == sql.ErrNoRows {
-		log.Info("找不到数据文件，准备创建...")
-		createDatabase()
-		return
-	} else if err != nil {
-		log.Info(err)
-		return
-	} else {
-		log.Info("数据库已经存在。", tableExists)
-		return
+	tableSqlMap := map[string]string{
+		"llm_setting":  llmSettingTableSql,
+		"archive":      archiveTableSql,
+		"archive_docs": archiveDocsTableSql,
+		"doc_resource": docResourceTableSql,
+		"task":         taskTableSql,
+		"task_flow":    taskFlowTableSql,
+		"option":       optionTableSql,
+	}
+
+	var missingTables []string
+
+	for tableName, tableSql := range tableSqlMap {
+		var tableExists bool
+		err := sqlite.Conn().Get(&tableExists, checkTableSql, tableName)
+		if err == sql.ErrNoRows {
+			log.Printf("表 %s 不存在，SQL变量名: %s", tableName, tableSql)
+			missingTables = append(missingTables, tableSql)
+		} else if err != nil {
+			log.Info(err)
+			return
+		} else {
+			log.Printf("表 %s 已经存在。", tableName)
+		}
+	}
+	if len(missingTables) > 0 {
+		createDatabase(missingTables)
 	}
 }
