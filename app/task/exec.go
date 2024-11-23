@@ -35,10 +35,10 @@ func (task *Task) Exec() {
 				log.Info("抓取成功:", item, task.TaskName, task.ID)
 			}
 		}
-		task.Crawler.OnScraped(func(r *colly.Response) {
-			log.Info("所有子链接抓取任务完成:", task.TaskName, task.ID)
-			insertTaskFlow(task.ID, TaskFlowStatusCompleted)
-		})
+		task.Crawler.Wait()
+		log.Info("所有子链接抓取任务完成:", task.TaskName, task.ID)
+		insertTaskFlow(task.ID, TaskFlowStatusCompleted)
+
 		if task.ExecType == 1 {
 			updateTaskStatus(task.ID, false)
 		}
