@@ -10,6 +10,16 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
+// 任务流水状态枚举
+const (
+	_                            int = iota
+	TaskFlowStatusCreated            // 创建触发
+	TaskFlowStatusScheduled          // 定时触发
+	TaskFlowStatusCompleted          // 执行结束
+	TaskFlowStatusManuallyClosed     // 手动关闭
+	TaskFlowStatusManuallyOpened     // 手动开启
+)
+
 var (
 	taskPool = sync.Pool{
 		New: func() interface{} {

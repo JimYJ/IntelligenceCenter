@@ -102,7 +102,7 @@ var (
 	taskFlowTableSql = `CREATE TABLE "task_flow" (
 							"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,           -- 主键
 							"task_id" INTEGER NOT NULL,                                -- 任务ID
-							"status" INTEGER NOT NULL,                                 -- 任务状态 (0: 创建触发, 1: 定时触发, 2: 执行结束, 3: 手动关闭, 4: 手动开启)
+							"status" INTEGER NOT NULL,                                 -- 流水状态 (0: 创建触发, 1: 定时触发, 2: 执行结束, 3: 手动关闭, 4: 手动开启)
 							"created_at" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,  -- 创建时间
 							"updated_at" datetime                                      -- 更新时间
 						);`

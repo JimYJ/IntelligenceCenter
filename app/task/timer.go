@@ -25,6 +25,7 @@ func Listen() {
 		log.Info(task)
 		if task.ExecType == 1 || task.ExecTimeSec >= now.Unix() {
 			log.Info("任务类型是单次立即执行任务或已经超过指定时间，立即执行任务:", task.TaskName, task.ID)
+			insertTaskFlow(task.ID, TaskFlowStatusCreated)
 			go task.Exec()
 			continue
 		}
@@ -33,6 +34,7 @@ func Listen() {
 		select {
 		case <-timer.C:
 			log.Info("已经到指定时间，开始执行任务:", task.TaskName, task.ID)
+			insertTaskFlow(task.ID, TaskFlowStatusScheduled)
 			go task.Exec()
 			continue
 		case <-cancelChan:

@@ -28,7 +28,19 @@ func (task *Task) Exec() {
 		list := strings.Split(task.CrawlURL, "\n")
 		for _, item := range list {
 			log.Info("开始抓取:", item, task.TaskName, task.ID)
-			log.Info(task.Crawler.Visit(item))
+			err := task.Crawler.Visit(item)
+			if err != nil {
+				log.Info("抓取失败:", err, item, task.TaskName, task.ID)
+			} else {
+				log.Info("抓取成功:", item, task.TaskName, task.ID)
+			}
+		}
+		task.Crawler.OnScraped(func(r *colly.Response) {
+			log.Info("所有子链接抓取任务完成:", task.TaskName, task.ID)
+			insertTaskFlow(task.ID, TaskFlowStatusCompleted)
+		})
+		if task.ExecType == 1 {
+			updateTaskStatus(task.ID, false)
 		}
 	} else if task.CrawlMode == 2 {
 		log.Info("开始执行智能抓取任务:", task.TaskName, task.ID)
