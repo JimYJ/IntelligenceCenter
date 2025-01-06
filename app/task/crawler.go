@@ -28,6 +28,8 @@ func (task *Task) CreateCrawler() *colly.Collector {
 		colly.TraceHTTP(),
 		colly.IgnoreRobotsTxt(),
 	)
+	// proxyURL := "http://localhost:8888" // 指向你自己实现的代理
+	// c.SetProxy(proxyURL)
 	c.SetRequestTimeout(requestTimeout)
 	extensions.RandomUserAgent(c)
 	hostList := utils.GetHost(task.DomainMatch)
@@ -95,6 +97,7 @@ func (task *Task) CreateCrawler() *colly.Collector {
 			if err == nil {
 				r.Headers.Set("X-Real-IP", ips[0].String())
 				r.Headers.Set("x-forwarded-for", ips[0].String())
+				r.Headers.Set("Source-IP", ips[0].String())
 			}
 		}
 		if ref := r.Ctx.Get("_referer"); ref != "" {
