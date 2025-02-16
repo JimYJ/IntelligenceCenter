@@ -25,7 +25,6 @@ func main() {
 	go router.Web(static)
 	go task.Retry()
 	go task.ListenMatch()
-	go proxy.Run()
 	router.Api()
 }
 
