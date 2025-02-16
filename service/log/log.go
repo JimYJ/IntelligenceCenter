@@ -3,6 +3,8 @@ package log
 import (
 	"IntelligenceCenter/common"
 	"fmt"
+	"io"
+	"os"
 	"runtime"
 	"time"
 
@@ -19,16 +21,19 @@ var (
 func setupLogger() *logrus.Logger {
 	logger := logrus.New()
 	// 获取当前日期并格式化
-	logFileName := fmt.Sprintf("%s/%s.log", common.LogsDir, time.Now().Format("2006-01-02"))
+	logFileName := fmt.Sprintf("%s/%s.log", common.LogsDir, time.Now().Format(time.DateOnly))
 
-	// 设置日志输出为文件，按日期分文件
-	logger.SetOutput(&lumberjack.Logger{
+	// 创建一个io.MultiWriter,同时写入文件和控制台
+	fileLogger := &lumberjack.Logger{
 		Filename:   logFileName, // 日志文件位置
 		MaxSize:    10,          // 每个文件最大尺寸 (MB)
 		MaxBackups: 3,           // 保留旧文件的最大数量
 		MaxAge:     30,          // 旧文件保留天数
 		Compress:   true,        // 是否压缩/归档旧文件
-	})
+	}
+
+	multiWriter := io.MultiWriter(os.Stdout, fileLogger)
+	logger.SetOutput(multiWriter)
 
 	// 设置自定义日志格式
 	logger.SetFormatter(&CustomFormatter{})
