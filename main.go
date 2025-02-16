@@ -2,7 +2,6 @@ package main
 
 import (
 	"IntelligenceCenter/app/db"
-	"IntelligenceCenter/app/proxy"
 	"IntelligenceCenter/app/task"
 	"IntelligenceCenter/common"
 	"IntelligenceCenter/common/utils"
