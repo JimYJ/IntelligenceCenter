@@ -180,3 +180,25 @@ func allTaskForExec() []*Task {
 	}
 	return list
 }
+
+// 插入任务流水
+func insertTaskFlow(taskID int, status int) error {
+	sql := `INSERT INTO task_flow (task_id, status, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)`
+	_, err := sqlite.Conn().Exec(sql, taskID, status)
+	if err != nil {
+		log.Info("插入任务流水失败:", err)
+		return err
+	}
+	return nil
+}
+
+// 修改任务状态
+func updateTaskStatus(taskID int, status bool) error {
+	sql := `UPDATE task SET task_status = ? WHERE id = ?`
+	_, err := sqlite.Conn().Exec(sql, status, taskID)
+	if err != nil {
+		log.Info("更新任务状态失败:", err)
+		return err
+	}
+	return nil
+}

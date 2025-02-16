@@ -23,7 +23,7 @@ func ListByPage(c *gin.Context) {
 	k := &common.Keyword{}
 	err := c.ShouldBindJSON(k)
 	if err != nil {
-		response.Err(c, 400, "请求参数不正确")
+		response.Err(c, 400, response.ErrInvalidRequestParam)
 	}
 	pageNo, pageSize := common.PageParams(c)
 	totalCount := CountRecord(k.Keyword)
@@ -52,6 +52,10 @@ func List(c *gin.Context) {
 // 档案信息
 func Info(c *gin.Context) {
 	id := c.Query("id")
+	if len(id) == 0 {
+		response.Err(c, 400, response.ErrIDCannotBeZeroOrEmpty)
+		return
+	}
 	data := archiveInfo(id)
 	data.FileCount = DocCountRecord(id, "")
 	data.TaskCount = archiveTask(id, -1)
@@ -64,9 +68,13 @@ func DocListByPage(c *gin.Context) {
 	k := &common.Keyword{}
 	err := c.ShouldBindJSON(k)
 	if err != nil {
-		response.Err(c, 400, "请求参数不正确")
+		response.Err(c, 400, response.ErrInvalidRequestParam)
 	}
 	id := c.Query("id")
+	if len(id) == 0 {
+		response.Err(c, 400, response.ErrIDCannotBeZeroOrEmpty)
+		return
+	}
 	pageNo, pageSize := common.PageParams(c)
 	totalCount := DocCountRecord(id, k.Keyword)
 	if totalCount == 0 {
@@ -121,4 +129,34 @@ func SaveDocResourceBatch() {
 			return // 退出函数
 		}
 	}
+}
+
+// 获取文档信息
+func GetArchiveDocsHandler(c *gin.Context) {
+	docID := c.Query("id")
+	if len(docID) == 0 {
+		response.Err(c, 400, response.ErrIDCannotBeZeroOrEmpty)
+		return
+	}
+	docDetail, err := getArchiveDocByID(docID)
+	if err != nil {
+		response.Err(c, 500, response.ErrOperationFailed)
+		return
+	}
+	response.Success(c, docDetail)
+}
+
+// 获取文档资源路径
+func GetDocResourceList(c *gin.Context) {
+	docID := c.Query("id")
+	if len(docID) == 0 {
+		response.Err(c, 400, response.ErrIDCannotBeZeroOrEmpty)
+		return
+	}
+	resourcePaths, err := getResourcePathsByDocID(docID)
+	if err != nil {
+		response.Err(c, 500, response.ErrOperationFailed)
+		return
+	}
+	response.Success(c, resourcePaths)
 }

@@ -88,3 +88,9 @@ func Info(msg ...any) {
 	}
 	Logger.Log(logrus.InfoLevel, tempMsg...)
 }
+
+func Printf(format string, args ...any) {
+	location := getCallerInfo()
+	message := fmt.Sprintf(format, args...)
+	Logger.Log(logrus.InfoLevel, location+" "+message)
+}
